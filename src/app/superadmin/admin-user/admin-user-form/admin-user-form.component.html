@@ -1,0 +1,134 @@
+<app-admin-layout [username]="'Admin'" userRole="SuperAdmin">
+  <div class="admin-user-form-container">
+    <div class="page-header">
+      <h1 class="page-title">{{ isEditMode ? 'Edit Admin User' : 'Create Admin User' }}</h1>
+      <div class="header-actions">
+        <button class="action-button cancel-button" (click)="cancel()">
+          <i class="fas fa-times"></i>
+          <span>Cancel</span>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="success-message">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage }}
+    </div>
+
+    <div class="form-card" *ngIf="!isLoading">
+      <form [formGroup]="adminUserForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="username">Username <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="username" 
+            formControlName="username" 
+            [class.error]="hasError('username', 'required') || hasError('username', 'minlength') || hasError('username', 'maxlength')"
+          >
+          <div class="error-text" *ngIf="hasError('username', 'required')">
+            Username is required
+          </div>
+          <div class="error-text" *ngIf="hasError('username', 'minlength')">
+            Username must be at least 3 characters
+          </div>
+          <div class="error-text" *ngIf="hasError('username', 'maxlength')">
+            Username cannot exceed 50 characters
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email <span class="required">*</span></label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            [class.error]="hasError('email', 'required') || hasError('email', 'email')"
+          >
+          <div class="error-text" *ngIf="hasError('email', 'required')">
+            Email is required
+          </div>
+          <div class="error-text" *ngIf="hasError('email', 'email')">
+            Please enter a valid email address
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">
+            Password <span class="required" *ngIf="!isEditMode">*</span>
+            <span class="optional" *ngIf="isEditMode">(leave blank to keep current password)</span>
+          </label>
+          <input 
+            type="password" 
+            id="password" 
+            formControlName="password" 
+            [class.error]="hasError('password', 'required') || hasError('password', 'minlength')"
+          >
+          <div class="error-text" *ngIf="hasError('password', 'required')">
+            Password is required
+          </div>
+          <div class="error-text" *ngIf="hasError('password', 'minlength')">
+            Password must be at least 6 characters
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="teamId">Team <span class="required">*</span></label>
+          <select 
+            id="teamId" 
+            formControlName="teamId" 
+            [class.error]="hasError('teamId', 'required')"
+          >
+            <option value="" disabled selected>Select a team</option>
+            <option *ngFor="let team of teams" [value]="team.id">
+              {{ team.name }} ({{ team.countryName }})
+            </option>
+          </select>
+          <div class="error-text" *ngIf="hasError('teamId', 'required')">
+            Team is required
+          </div>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <div class="checkbox-wrapper">
+            <input 
+              type="checkbox" 
+              id="isActive" 
+              formControlName="isActive"
+            >
+            <label for="isActive">Active</label>
+          </div>
+          <div class="checkbox-hint">
+            Inactive users cannot log in to the system
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="action-button cancel-button" (click)="cancel()">
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="action-button submit-button" 
+            [disabled]="isSubmitting"
+          >
+            <i class="fas fa-circle-notch fa-spin" *ngIf="isSubmitting"></i>
+            <span *ngIf="!isSubmitting">{{ isEditMode ? 'Update' : 'Create' }}</span>
+            <span *ngIf="isSubmitting">{{ isEditMode ? 'Updating...' : 'Creating...' }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
+      <p>Loading admin user data...</p>
+    </div>
+  </div>
+</app-admin-layout>

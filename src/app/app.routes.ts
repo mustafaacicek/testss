@@ -66,6 +66,30 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { role: 'SuperAdmin' }
   },
+  {
+    path: 'superadmin/admin-users',
+    loadComponent: () => import('./superadmin/admin-user/admin-user-list/admin-user-list.component').then(m => m.AdminUserListComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
+  {
+    path: 'superadmin/admin-users/create',
+    loadComponent: () => import('./superadmin/admin-user/admin-user-form/admin-user-form.component').then(m => m.AdminUserFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
+  {
+    path: 'superadmin/admin-users/edit/:id',
+    loadComponent: () => import('./superadmin/admin-user/admin-user-form/admin-user-form.component').then(m => m.AdminUserFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
+  {
+    path: 'superadmin/admin-users/:id',
+    loadComponent: () => import('./superadmin/admin-user/admin-user-detail/admin-user-detail.component').then(m => m.AdminUserDetailComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

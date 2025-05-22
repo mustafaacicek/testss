@@ -59,7 +59,7 @@
         </div>
       </div>
       
-      <div class="dashboard-card">
+      <div class="dashboard-card" [routerLink]="['/superadmin/admin-users']">
         <div class="card-header">
           <h2>Admin User Management</h2>
           <div class="card-icon">
@@ -68,6 +68,10 @@
         </div>
         <div class="card-content">
           <p>Manage admin users and their permissions.</p>
+          <div class="card-action">
+            <span>Manage Admin Users</span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
         </div>
       </div>
     </div>

@@ -1,0 +1,115 @@
+<app-admin-layout [username]="'Admin'" userRole="SuperAdmin">
+  <div class="admin-user-detail-container">
+    <div class="page-header">
+      <h1 class="page-title">Admin User Details</h1>
+      <div class="header-actions">
+        <button class="action-button back-button" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to List</span>
+        </button>
+        <button *ngIf="adminUser" class="action-button edit-button" (click)="goToEdit()">
+          <i class="fas fa-edit"></i>
+          <span>Edit</span>
+        </button>
+        <button *ngIf="adminUser" class="action-button delete-button" (click)="deleteAdminUser()">
+          <i class="fas fa-trash"></i>
+          <span>Delete</span>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <div class="detail-card" *ngIf="adminUser && !isLoading">
+      <div class="user-header">
+        <div class="user-avatar">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="user-info">
+          <h2>{{ adminUser.username }}</h2>
+          <div class="user-meta">
+            <span class="status-badge" [ngClass]="{ 'active': adminUser.isActive, 'inactive': !adminUser.isActive }">
+              {{ adminUser.isActive ? 'Active' : 'Inactive' }}
+            </span>
+            <span class="role-badge">{{ adminUser.roleName.replace('ROLE_', '') }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3>Basic Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">Email</div>
+            <div class="detail-value">{{ adminUser.email }}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Team</div>
+            <div class="detail-value">{{ adminUser.teamName }}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Status</div>
+            <div class="detail-value">
+              <span class="status-badge" [ngClass]="{ 'active': adminUser.isActive, 'inactive': !adminUser.isActive }">
+                {{ adminUser.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Role</div>
+            <div class="detail-value">{{ adminUser.roleName.replace('ROLE_', '') }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h3>System Information</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">Created By</div>
+            <div class="detail-value">{{ adminUser.createdByUsername }}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Created At</div>
+            <div class="detail-value">{{ adminUser.createdAt | date:'medium' }}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Last Updated</div>
+            <div class="detail-value">{{ adminUser.updatedAt | date:'medium' }}</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">User ID</div>
+            <div class="detail-value">{{ adminUser.id }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-actions">
+        <button class="action-button back-button" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to List</span>
+        </button>
+        <div class="action-group">
+          <button class="action-button edit-button" (click)="goToEdit()">
+            <i class="fas fa-edit"></i>
+            <span>Edit</span>
+          </button>
+          <button class="action-button delete-button" (click)="deleteAdminUser()">
+            <i class="fas fa-trash"></i>
+            <span>Delete</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
+      <p>Loading admin user data...</p>
+    </div>
+  </div>
+</app-admin-layout>
