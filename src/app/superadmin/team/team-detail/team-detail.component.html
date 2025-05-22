@@ -1,0 +1,124 @@
+<app-admin-layout [username]="'Admin'" userRole="SuperAdmin">
+  <div class="team-detail-container">
+    <div class="page-header">
+      <h1 class="page-title">Team Details</h1>
+      <div class="header-actions">
+        <a [routerLink]="['/superadmin/teams']" class="action-button back-button">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Teams</span>
+        </a>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <div class="team-detail-card" *ngIf="!isLoading && team">
+      <div class="team-header">
+        <div class="team-logo">
+          <img *ngIf="team.logoUrl" [src]="team.logoUrl" [alt]="team.name + ' logo'">
+          <div *ngIf="!team.logoUrl" class="no-logo">
+            <i class="fas fa-futbol"></i>
+          </div>
+        </div>
+        <div class="team-title">
+          <h2>{{ team.name }}</h2>
+          <div class="team-country">{{ team.countryName }}</div>
+          <div class="team-status">
+            <div class="status-badge" [ngClass]="{ 'active': team.isActive, 'inactive': !team.isActive }">
+              {{ team.isActive ? 'Active' : 'Inactive' }}
+            </div>
+          </div>
+        </div>
+        <div class="team-actions">
+          <a [routerLink]="['/superadmin/teams/edit', team.id]" class="action-button edit-button">
+            <i class="fas fa-edit"></i>
+            <span>Edit</span>
+          </a>
+          <button class="action-button delete-button" (click)="deleteTeam()">
+            <i class="fas fa-trash"></i>
+            <span>Delete</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="team-body">
+        <div class="info-section">
+          <h3 class="section-title">Stadium Information</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Stadium Name</div>
+              <div class="info-value">{{ team.stadiumName }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Stadium Location</div>
+              <div class="info-value">{{ team.stadiumLocation }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <h3 class="section-title">Subscription Details</h3>
+          <div class="subscription-card" [ngClass]="getSubscriptionStatus()">
+            <div class="subscription-header">
+              <div class="subscription-icon">
+                <i class="fas" [ngClass]="{
+                  'fa-crown': team.subscriptionTypeName === 'Premium' || team.subscriptionTypeName === 'Enterprise',
+                  'fa-tag': team.subscriptionTypeName === 'Basic',
+                  'fa-times': !team.subscriptionTypeName
+                }"></i>
+              </div>
+              <div class="subscription-title">
+                <h4>{{ team.subscriptionTypeName || 'No Subscription' }}</h4>
+                <div class="subscription-status">
+                  {{ getSubscriptionStatus() === 'active' ? 'Active' : 
+                     getSubscriptionStatus() === 'expired' ? 'Expired' : 'None' }}
+                </div>
+              </div>
+            </div>
+            <div class="subscription-details" *ngIf="team.subscriptionTypeName">
+              <div class="subscription-item">
+                <div class="item-label">Start Date</div>
+                <div class="item-value">{{ formatDate(team.subscriptionStart) }}</div>
+              </div>
+              <div class="subscription-item">
+                <div class="item-label">Expiry Date</div>
+                <div class="item-value">{{ formatDate(team.subscriptionExpiry) }}</div>
+              </div>
+            </div>
+            <div class="subscription-message" *ngIf="!team.subscriptionTypeName">
+              This team doesn't have an active subscription plan.
+            </div>
+          </div>
+        </div>
+
+        <div class="info-section">
+          <h3 class="section-title">System Information</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Created By</div>
+              <div class="info-value">{{ team.createdByUsername }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Created At</div>
+              <div class="info-value">{{ formatDate(team.createdAt) }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Last Updated</div>
+              <div class="info-value">{{ formatDate(team.updatedAt) }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
+      <p>Loading team data...</p>
+    </div>
+  </div>
+</app-admin-layout>

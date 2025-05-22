@@ -42,6 +42,30 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { role: 'SuperAdmin' }
   },
+  {
+    path: 'superadmin/teams',
+    loadComponent: () => import('./superadmin/team/team-list/team-list.component').then(m => m.TeamListComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
+  {
+    path: 'superadmin/teams/create',
+    loadComponent: () => import('./superadmin/team/team-form/team-form.component').then(m => m.TeamFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
+  {
+    path: 'superadmin/teams/edit/:id',
+    loadComponent: () => import('./superadmin/team/team-form/team-form.component').then(m => m.TeamFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
+  {
+    path: 'superadmin/teams/:id',
+    loadComponent: () => import('./superadmin/team/team-detail/team-detail.component').then(m => m.TeamDetailComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

@@ -46,6 +46,12 @@
             <span class="nav-text" *ngIf="!isSidebarCollapsed">Countries</span>
           </a>
         </li>
+        <li class="nav-item" *ngIf="userRole === 'SuperAdmin'">
+          <a class="nav-link" routerLink="/superadmin/teams" routerLinkActive="active">
+            <i class="fas fa-futbol"></i>
+            <span class="nav-text" *ngIf="!isSidebarCollapsed">Teams</span>
+          </a>
+        </li>
         <li class="nav-item">
           <a class="nav-link" routerLink="/sounds" routerLinkActive="active">
             <i class="fas fa-music"></i>

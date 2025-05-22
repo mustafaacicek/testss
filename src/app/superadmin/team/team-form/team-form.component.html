@@ -1,0 +1,162 @@
+<app-admin-layout [username]="'Admin'" userRole="SuperAdmin">
+  <div class="team-form-container">
+    <div class="page-header">
+      <h1 class="page-title">{{ formTitle }}</h1>
+      <div class="header-actions">
+        <a [routerLink]="['/superadmin/teams']" class="action-button back-button">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Teams</span>
+        </a>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-card" *ngIf="!isLoading">
+      <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name">Team Name <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i class="fas fa-futbol"></i>
+              <input 
+                type="text" 
+                id="name" 
+                formControlName="name" 
+                placeholder="Enter team name"
+                [ngClass]="{'is-invalid': teamForm.get('name')?.invalid && teamForm.get('name')?.touched}"
+              >
+            </div>
+            <div class="error-message" *ngIf="teamForm.get('name')?.invalid && teamForm.get('name')?.touched">
+              <i class="fas fa-exclamation-circle"></i>
+              <span *ngIf="teamForm.get('name')?.errors?.['required']">Team name is required</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="logoUrl">Logo URL</label>
+            <div class="input-wrapper">
+              <i class="fas fa-image"></i>
+              <input 
+                type="text" 
+                id="logoUrl" 
+                formControlName="logoUrl" 
+                placeholder="Enter logo URL (optional)"
+              >
+            </div>
+            <div class="logo-preview" *ngIf="teamForm.get('logoUrl')?.value">
+              <img [src]="teamForm.get('logoUrl')?.value" alt="Team logo preview">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="stadiumName">Stadium Name <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i class="fas fa-map-marker-alt"></i>
+              <input 
+                type="text" 
+                id="stadiumName" 
+                formControlName="stadiumName" 
+                placeholder="Enter stadium name"
+                [ngClass]="{'is-invalid': teamForm.get('stadiumName')?.invalid && teamForm.get('stadiumName')?.touched}"
+              >
+            </div>
+            <div class="error-message" *ngIf="teamForm.get('stadiumName')?.invalid && teamForm.get('stadiumName')?.touched">
+              <i class="fas fa-exclamation-circle"></i>
+              <span *ngIf="teamForm.get('stadiumName')?.errors?.['required']">Stadium name is required</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="stadiumLocation">Stadium Location <span class="required">*</span></label>
+            <div class="input-wrapper">
+              <i class="fas fa-location-arrow"></i>
+              <input 
+                type="text" 
+                id="stadiumLocation" 
+                formControlName="stadiumLocation" 
+                placeholder="Enter stadium location"
+                [ngClass]="{'is-invalid': teamForm.get('stadiumLocation')?.invalid && teamForm.get('stadiumLocation')?.touched}"
+              >
+            </div>
+            <div class="error-message" *ngIf="teamForm.get('stadiumLocation')?.invalid && teamForm.get('stadiumLocation')?.touched">
+              <i class="fas fa-exclamation-circle"></i>
+              <span *ngIf="teamForm.get('stadiumLocation')?.errors?.['required']">Stadium location is required</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="countryId">Country <span class="required">*</span></label>
+            <div class="input-wrapper select-wrapper">
+              <i class="fas fa-globe"></i>
+              <select 
+                id="countryId" 
+                formControlName="countryId"
+                [ngClass]="{'is-invalid': teamForm.get('countryId')?.invalid && teamForm.get('countryId')?.touched}"
+              >
+                <option value="">Select a country</option>
+                <option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</option>
+              </select>
+            </div>
+            <div class="error-message" *ngIf="teamForm.get('countryId')?.invalid && teamForm.get('countryId')?.touched">
+              <i class="fas fa-exclamation-circle"></i>
+              <span *ngIf="teamForm.get('countryId')?.errors?.['required']">Country is required</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="subscriptionTypeId">Subscription Type</label>
+            <div class="input-wrapper select-wrapper">
+              <i class="fas fa-tag"></i>
+              <select 
+                id="subscriptionTypeId" 
+                formControlName="subscriptionTypeId"
+              >
+                <option value="">No subscription</option>
+                <option *ngFor="let type of subscriptionTypes" [value]="type.id">
+                  {{ type.name }} ({{ type.durationDays / 30 }} months - ${{ type.price }})
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-wrapper">
+            <input 
+              type="checkbox" 
+              id="isActive" 
+              formControlName="isActive"
+            >
+            <label for="isActive">Active Team</label>
+          </div>
+          <div class="helper-text">Inactive teams will not be visible to users.</div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="action-button cancel-button" [routerLink]="['/superadmin/teams']">
+            Cancel
+          </button>
+          <button type="submit" class="action-button submit-button" [disabled]="teamForm.invalid || isSubmitting">
+            <i class="fas" [ngClass]="isSubmitting ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+            <span>{{ submitButtonText }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
+      <p>Loading team data...</p>
+    </div>
+  </div>
+</app-admin-layout>

@@ -1,0 +1,143 @@
+<app-admin-layout [username]="'Admin'" userRole="SuperAdmin">
+  <div class="team-container">
+    <div class="page-header">
+      <h1 class="page-title">Teams</h1>
+      <div class="header-actions">
+        <a [routerLink]="['/superadmin/teams/create']" class="action-button create-button">
+          <i class="fas fa-plus"></i>
+          <span>Add Team</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="fas fa-search"></i>
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            placeholder="Search teams by name"
+          >
+          <button *ngIf="searchQuery" class="clear-search" (click)="clearSearch()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <button class="search-button" (click)="searchTeams()">
+          <i class="fas fa-search"></i>
+          Search
+        </button>
+      </div>
+
+      <div class="filter-tabs">
+        <button 
+          class="filter-tab" 
+          [class.active]="statusFilter === 'all'"
+          (click)="filterByStatus('all')"
+        >
+          All Teams
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="statusFilter === 'active'"
+          (click)="filterByStatus('active')"
+        >
+          Active
+        </button>
+        <button 
+          class="filter-tab" 
+          [class.active]="statusFilter === 'inactive'"
+          (click)="filterByStatus('inactive')"
+        >
+          Inactive
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <div class="teams-grid" *ngIf="!isLoading && filteredTeams.length > 0">
+      <div class="team-card" *ngFor="let team of filteredTeams">
+        <div class="team-logo">
+          <img *ngIf="team.logoUrl" [src]="team.logoUrl" [alt]="team.name + ' logo'">
+          <div *ngIf="!team.logoUrl" class="no-logo">
+            <i class="fas fa-futbol"></i>
+          </div>
+        </div>
+        <div class="team-info">
+          <h3 class="team-name">{{ team.name }}</h3>
+          <div class="team-country">{{ team.countryName }}</div>
+          <div class="team-details">
+            <div class="detail-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ team.stadiumName }}</span>
+            </div>
+            <div class="detail-item">
+              <i class="fas fa-location-arrow"></i>
+              <span>{{ team.stadiumLocation }}</span>
+            </div>
+          </div>
+          <div class="team-status">
+            <div class="status-badge" [ngClass]="{
+              'active': team.isActive, 
+              'inactive': !team.isActive
+            }">
+              {{ team.isActive ? 'Active' : 'Inactive' }}
+            </div>
+            <div class="subscription-badge" [ngClass]="getSubscriptionStatus(team)">
+              {{ team.subscriptionTypeName || 'No Subscription' }}
+              <span *ngIf="team.subscriptionExpiry" class="expiry-date">
+                {{ getSubscriptionStatus(team) === 'active' ? 'Expires' : 'Expired' }}: {{ team.subscriptionExpiry | date:'mediumDate' }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="team-actions">
+          <a [routerLink]="['/superadmin/teams', team.id]" class="action-button view-button">
+            <i class="fas fa-eye"></i>
+          </a>
+          <a [routerLink]="['/superadmin/teams/edit', team.id]" class="action-button edit-button">
+            <i class="fas fa-edit"></i>
+          </a>
+          <button class="action-button delete-button" (click)="deleteTeam(team.id, $event)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading && filteredTeams.length === 0">
+      <div class="empty-icon">
+        <i class="fas fa-futbol"></i>
+      </div>
+      <h3>No Teams Found</h3>
+      <p *ngIf="searchQuery">No teams match your search criteria. Try a different search term or clear the search.</p>
+      <p *ngIf="!searchQuery && statusFilter !== 'all'">No teams found with the selected status filter.</p>
+      <p *ngIf="!searchQuery && statusFilter === 'all'">There are no teams in the system yet. Add your first team to get started.</p>
+      <a *ngIf="!searchQuery && statusFilter === 'all'" [routerLink]="['/superadmin/teams/create']" class="action-button create-button">
+        <i class="fas fa-plus"></i>
+        <span>Add Team</span>
+      </a>
+      <div *ngIf="searchQuery || statusFilter !== 'all'" class="action-buttons">
+        <button *ngIf="searchQuery" class="action-button" (click)="clearSearch()">
+          <i class="fas fa-times"></i>
+          <span>Clear Search</span>
+        </button>
+        <button *ngIf="statusFilter !== 'all'" class="action-button" (click)="filterByStatus('all')">
+          <i class="fas fa-filter"></i>
+          <span>Show All Teams</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading || isSearching">
+      <div class="spinner">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
+      <p>{{ isSearching ? 'Searching teams...' : 'Loading teams...' }}</p>
+    </div>
+  </div>
+</app-admin-layout>
