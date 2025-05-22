@@ -1,0 +1,201 @@
+<app-admin-layout [username]="'Admin'" userRole="Admin">
+  <div class="detail-container">
+    <div class="page-header">
+      <h1 class="page-title" *ngIf="sound">{{ sound.title }}</h1>
+      <div class="header-actions">
+        <a [routerLink]="['/admin/sounds']" class="secondary-button">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Sounds</span>
+        </a>
+        <a *ngIf="sound" [routerLink]="['/admin/sounds/edit', sound.id]" class="edit-button">
+          <i class="fas fa-edit"></i>
+          <span>Edit</span>
+        </a>
+        <button *ngIf="sound" class="delete-button" (click)="deleteSound()">
+          <i class="fas fa-trash"></i>
+          <span>Delete</span>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="successMessage" class="notification success">
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button type="button" class="notification-close" (click)="successMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div *ngIf="errorMessage" class="notification error">
+      <div class="notification-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button type="button" class="notification-close" (click)="errorMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="detail-content" *ngIf="!isLoading && sound">
+      <div class="detail-grid">
+        <div class="info-card">
+          <div class="card-header">
+            <h2 class="card-title">Sound Information</h2>
+          </div>
+          <div class="card-content">
+            <div class="title-row">
+              <h3 class="sound-title">{{ sound.title }}</h3>
+              <div class="status-badge" [ngClass]="{
+                'status-started': sound.status === SoundStatus.STARTED,
+                'status-stopped': sound.status === SoundStatus.STOPPED,
+                'status-paused': sound.status === SoundStatus.PAUSED,
+                'status-buffering': sound.status === SoundStatus.BUFFERING,
+                'status-ended': sound.status === SoundStatus.ENDED
+              }">
+                {{ sound.status }}
+              </div>
+            </div>
+            
+            <div class="info-row">
+              <div class="info-label">Team</div>
+              <div class="info-value">{{ sound.teamName }}</div>
+            </div>
+            
+            <div class="info-row">
+              <div class="info-label">Last Updated</div>
+              <div class="info-value">{{ sound.updatedAt | date:'medium' }}</div>
+            </div>
+            
+            <div class="info-row">
+              <div class="info-label">Current Position</div>
+              <div class="info-value">{{ formatTime(sound.currentMillisecond) }}</div>
+            </div>
+            
+            <div class="info-row" *ngIf="sound.soundUrl1">
+              <div class="info-label">Primary Sound</div>
+              <div class="info-value">
+                <a [href]="sound.soundUrl1" target="_blank" class="file-link">
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Open in new tab</span>
+                </a>
+              </div>
+            </div>
+            
+            <div class="info-row" *ngIf="sound.soundUrl2">
+              <div class="info-label">Secondary Sound</div>
+              <div class="info-value">
+                <a [href]="sound.soundUrl2" target="_blank" class="file-link">
+                  <i class="fas fa-external-link-alt"></i>
+                  <span>Open in new tab</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="player-card" *ngIf="sound.soundUrl1">
+          <div class="card-header">
+            <h2 class="card-title">Sound Player</h2>
+          </div>
+          <div class="card-content">
+            <div class="player-container">
+              <div class="player-controls">
+                <div class="control-buttons">
+                  <button 
+                    class="play-button" 
+                    *ngIf="!isPlaying"
+                    (click)="playAudio()"
+                    [disabled]="!sound.soundUrl1"
+                  >
+                    <i class="fas fa-play"></i>
+                  </button>
+                  <button 
+                    class="pause-button" 
+                    *ngIf="isPlaying"
+                    (click)="pauseAudio()"
+                  >
+                    <i class="fas fa-pause"></i>
+                  </button>
+                  <button 
+                    class="stop-button" 
+                    (click)="stopAudio()"
+                    [disabled]="!isPlaying && !isPaused"
+                  >
+                    <i class="fas fa-stop"></i>
+                  </button>
+                </div>
+                
+                <div class="time-display">
+                  <span class="current-time">{{ formatTime(currentTime) }}</span>
+                  <span class="time-separator">/</span>
+                  <span class="total-time">{{ formatTime(duration) }}</span>
+                </div>
+              </div>
+              
+              <div class="progress-container">
+                <input 
+                  type="range" 
+                  class="progress-slider" 
+                  min="0" 
+                  [max]="duration" 
+                  [value]="currentTime"
+                  (input)="onSeek($event)"
+                >
+              </div>
+              
+              <div class="volume-container">
+                <i class="fas fa-volume-down"></i>
+                <input 
+                  type="range" 
+                  class="volume-slider" 
+                  min="0" 
+                  max="1" 
+                  step="0.1"
+                  [value]="volume"
+                  (input)="onVolumeChange($event)"
+                >
+                <i class="fas fa-volume-up"></i>
+              </div>
+              
+              <div class="player-info">
+                <div class="info-message">
+                  <i class="fas fa-info-circle"></i>
+                  <span *ngIf="sound.soundUrl2">This sound has both primary and secondary audio files that will play simultaneously.</span>
+                  <span *ngIf="!sound.soundUrl2">This sound has only a primary audio file.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="player-card empty-player" *ngIf="!sound.soundUrl1">
+          <div class="card-header">
+            <h2 class="card-title">Sound Player</h2>
+          </div>
+          <div class="card-content">
+            <div class="empty-state">
+              <div class="empty-icon">
+                <i class="fas fa-volume-mute"></i>
+              </div>
+              <h3 class="empty-title">No Sound File Available</h3>
+              <p class="empty-message">This sound doesn't have any audio files attached.</p>
+              <a [routerLink]="['/admin/sounds/edit', sound.id]" class="action-button">
+                <i class="fas fa-upload"></i>
+                <span>Upload Sound Files</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <p class="loading-text">Loading sound data...</p>
+    </div>
+  </div>
+</app-admin-layout>

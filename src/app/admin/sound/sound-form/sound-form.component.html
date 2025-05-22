@@ -1,0 +1,178 @@
+<app-admin-layout [username]="'Admin'" userRole="Admin">
+  <div class="form-container">
+    <div class="page-header">
+      <h1 class="page-title">{{ isEditMode ? 'Edit Sound' : 'Create New Sound' }}</h1>
+      <div class="header-actions">
+        <button class="secondary-button" (click)="cancelEdit()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="notification success" *ngIf="successMessage">
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="successMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="notification error" *ngIf="errorMessage">
+      <div class="notification-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="errorMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <p class="loading-text">Loading sound data...</p>
+    </div>
+
+    <div class="form-card" *ngIf="!isLoading">
+      <form [formGroup]="soundForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="title" class="form-label">Title <span class="required">*</span></label>
+          <input 
+            type="text" 
+            class="form-input" 
+            id="title" 
+            formControlName="title" 
+            placeholder="Enter sound title"
+            [ngClass]="{'input-error': soundForm.get('title')?.invalid && soundForm.get('title')?.touched}"
+          >
+          <div class="error-message" *ngIf="soundForm.get('title')?.errors?.['required'] && soundForm.get('title')?.touched">
+            Title is required
+          </div>
+          <div class="error-message" *ngIf="soundForm.get('title')?.errors?.['maxlength'] && soundForm.get('title')?.touched">
+            Title cannot exceed 100 characters
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="soundFile1" class="form-label">Primary Sound File</label>
+          <div class="upload-card">
+            <div *ngIf="!soundForm.get('soundUrl1')?.value && !isUploading1" class="file-upload-container">
+              <div class="upload-area">
+                <div class="upload-icon">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h3 class="upload-title">Upload Sound File</h3>
+                <p class="upload-description">Click to browse or drag and drop</p>
+                <p class="upload-format">MP3, WAV, or OGG files only</p>
+                <input 
+                  type="file" 
+                  class="file-input" 
+                  id="soundFile1" 
+                  (change)="onFileSelected($event, 1)" 
+                  accept="audio/*"
+                >
+              </div>
+            </div>
+            
+            <div *ngIf="soundForm.get('soundUrl1')?.value && !isUploading1" class="file-preview">
+              <div class="file-info">
+                <div class="file-icon">
+                  <i class="fas fa-music"></i>
+                </div>
+                <div class="file-details">
+                  <div class="file-name">{{ soundFile1?.name || 'Sound File 1' }}</div>
+                  <a [href]="soundForm.get('soundUrl1')?.value" target="_blank" class="file-link">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>View file</span>
+                  </a>
+                </div>
+                <button type="button" class="file-remove" (click)="removeFile(1)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div *ngIf="isUploading1" class="upload-progress">
+              <div class="progress-bar-container">
+                <div class="progress-bar" [style.width.%]="uploadProgress1"></div>
+              </div>
+              <div class="progress-info">
+                <span class="progress-status">Uploading...</span>
+                <span class="progress-percentage">{{ uploadProgress1 }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="soundFile2" class="form-label">Secondary Sound File (Optional)</label>
+          <div class="upload-card">
+            <div *ngIf="!soundForm.get('soundUrl2')?.value && !isUploading2" class="file-upload-container">
+              <div class="upload-area">
+                <div class="upload-icon">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <h3 class="upload-title">Upload Secondary Sound File</h3>
+                <p class="upload-description">Click to browse or drag and drop</p>
+                <p class="upload-format">MP3, WAV, or OGG files only</p>
+                <input 
+                  type="file" 
+                  class="file-input" 
+                  id="soundFile2" 
+                  (change)="onFileSelected($event, 2)" 
+                  accept="audio/*"
+                >
+              </div>
+            </div>
+            
+            <div *ngIf="soundForm.get('soundUrl2')?.value && !isUploading2" class="file-preview">
+              <div class="file-info">
+                <div class="file-icon">
+                  <i class="fas fa-music"></i>
+                </div>
+                <div class="file-details">
+                  <div class="file-name">{{ soundFile2?.name || 'Sound File 2' }}</div>
+                  <a [href]="soundForm.get('soundUrl2')?.value" target="_blank" class="file-link">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>View file</span>
+                  </a>
+                </div>
+                <button type="button" class="file-remove" (click)="removeFile(2)">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div *ngIf="isUploading2" class="upload-progress">
+              <div class="progress-bar-container">
+                <div class="progress-bar" [style.width.%]="uploadProgress2"></div>
+              </div>
+              <div class="progress-info">
+                <span class="progress-status">Uploading...</span>
+                <span class="progress-percentage">{{ uploadProgress2 }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="secondary-button" (click)="cancelEdit()">
+            <span>Cancel</span>
+          </button>
+          <button 
+            type="submit" 
+            class="action-button" 
+            [disabled]="soundForm.invalid || isSaving"
+          >
+            <i class="fas" [ngClass]="isSaving ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+            <span>{{ isSaving ? 'Saving...' : (isEditMode ? 'Update Sound' : 'Create Sound') }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-admin-layout>

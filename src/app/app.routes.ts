@@ -12,6 +12,30 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { role: 'Admin' }
   },
+  {
+    path: 'admin/sounds',
+    loadComponent: () => import('./admin/sound/sound-list/sound-list.component').then(m => m.SoundListComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
+  {
+    path: 'admin/sounds/create',
+    loadComponent: () => import('./admin/sound/sound-form/sound-form.component').then(m => m.SoundFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
+  {
+    path: 'admin/sounds/edit/:id',
+    loadComponent: () => import('./admin/sound/sound-form/sound-form.component').then(m => m.SoundFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
+  {
+    path: 'admin/sounds/:id',
+    loadComponent: () => import('./admin/sound/sound-detail/sound-detail.component').then(m => m.SoundDetailComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
   { 
     path: 'superadmin', 
     loadComponent: () => import('./superadmin/dashboard/superadmin-dashboard.component').then(m => m.SuperAdminDashboardComponent),

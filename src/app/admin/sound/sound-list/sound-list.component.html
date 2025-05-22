@@ -1,0 +1,163 @@
+<app-admin-layout [username]="'Admin'" userRole="Admin">
+  <div class="sound-container">
+    <div class="page-header">
+      <h1 class="page-title">Sound Management</h1>
+      <div class="header-actions">
+        <a [routerLink]="['/admin/sounds/create']" class="action-button create-button">
+          <i class="fas fa-plus"></i>
+          <span>Add Sound</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="fas fa-search"></i>
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            placeholder="Search sounds..."
+            (keyup.enter)="searchSounds()"
+          >
+          <button *ngIf="searchQuery" class="clear-search" (click)="clearSearch()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <button class="search-button" (click)="searchSounds()">
+          <i class="fas fa-search"></i>
+          Search
+        </button>
+      </div>
+    </div>
+
+    <div class="notification success" *ngIf="successMessage">
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="successMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="notification error" *ngIf="errorMessage">
+      <div class="notification-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="errorMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="data-table-container" *ngIf="!isLoading && filteredSounds.length > 0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Position</th>
+            <th>Team</th>
+            <th>Last Updated</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let sound of filteredSounds">
+            <td class="title-cell">
+              <span class="sound-title">{{ sound.title }}</span>
+            </td>
+            <td>
+              <span class="status-badge" [ngClass]="{
+                'status-started': sound.status === SoundStatus.STARTED,
+                'status-stopped': sound.status === SoundStatus.STOPPED,
+                'status-paused': sound.status === SoundStatus.PAUSED,
+                'status-buffering': sound.status === SoundStatus.BUFFERING,
+                'status-ended': sound.status === SoundStatus.ENDED
+              }">
+                {{ sound.status }}
+              </span>
+            </td>
+            <td>{{ formatTime(sound.currentMillisecond) }}</td>
+            <td>{{ sound.teamName }}</td>
+            <td>{{ sound.updatedAt | date:'medium' }}</td>
+            <td>
+              <div class="action-buttons">
+                <div class="playback-controls" *ngIf="sound.soundUrl1">
+                  <button 
+                    class="action-icon play" 
+                    *ngIf="sound.status !== SoundStatus.STARTED"
+                    (click)="updateSoundStatus(sound.id, SoundStatus.STARTED)"
+                    title="Play"
+                  >
+                    <i class="fas fa-play"></i>
+                  </button>
+                  <button 
+                    class="action-icon pause" 
+                    *ngIf="sound.status === SoundStatus.STARTED"
+                    (click)="updateSoundStatus(sound.id, SoundStatus.PAUSED)"
+                    title="Pause"
+                  >
+                    <i class="fas fa-pause"></i>
+                  </button>
+                  <button 
+                    class="action-icon stop" 
+                    *ngIf="sound.status === SoundStatus.STARTED || sound.status === SoundStatus.PAUSED"
+                    (click)="updateSoundStatus(sound.id, SoundStatus.STOPPED)"
+                    title="Stop"
+                  >
+                    <i class="fas fa-stop"></i>
+                  </button>
+                </div>
+                <div class="item-actions">
+                  <a [routerLink]="['/admin/sounds', sound.id]" class="action-icon view" title="View">
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a [routerLink]="['/admin/sounds/edit', sound.id]" class="action-icon edit" title="Edit">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <button class="action-icon delete" (click)="deleteSound(sound.id)" title="Delete">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state-container" *ngIf="!isLoading && filteredSounds.length === 0">
+      <div class="empty-state">
+        <div class="empty-state-icon">
+          <i class="fas fa-music"></i>
+        </div>
+        <h3 class="empty-state-title">No Sounds Found</h3>
+        <p class="empty-state-message" *ngIf="searchQuery">
+          No sounds match your search criteria. Try a different search term or clear the search.
+        </p>
+        <p class="empty-state-message" *ngIf="!searchQuery && sounds.length === 0">
+          There are no sounds in your team yet. Add your first sound to get started.
+        </p>
+        <div class="empty-state-actions">
+          <a *ngIf="!searchQuery && sounds.length === 0" [routerLink]="['/admin/sounds/create']" class="action-button">
+            <i class="fas fa-plus"></i>
+            <span>Add Sound</span>
+          </a>
+          <button *ngIf="searchQuery" class="secondary-button" (click)="clearSearch()">
+            <i class="fas fa-times"></i>
+            <span>Clear Search</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <p class="loading-text">Loading sounds...</p>
+    </div>
+  </div>
+</app-admin-layout>

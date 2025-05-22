@@ -64,10 +64,10 @@
             <span class="nav-text" *ngIf="!isSidebarCollapsed">Subscription Types</span>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/sounds" routerLinkActive="active">
+        <li class="nav-item" *ngIf="userRole === 'Admin'">
+          <a class="nav-link" routerLink="/admin/sounds" routerLinkActive="active">
             <i class="fas fa-music"></i>
-            <span class="nav-text" *ngIf="!isSidebarCollapsed">Sounds</span>
+            <span class="nav-text" *ngIf="!isSidebarCollapsed">Sound Management</span>
           </a>
         </li>
         <li class="nav-item">
