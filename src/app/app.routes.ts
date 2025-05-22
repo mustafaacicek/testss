@@ -90,6 +90,30 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { role: 'SuperAdmin' }
   },
+  {
+    path: 'superadmin/subscription-types',
+    loadComponent: () => import('./superadmin/subscription-type/subscription-type-list/subscription-type-list.component').then(m => m.SubscriptionTypeListComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
+  {
+    path: 'superadmin/subscription-types/create',
+    loadComponent: () => import('./superadmin/subscription-type/subscription-type-form/subscription-type-form.component').then(m => m.SubscriptionTypeFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
+  {
+    path: 'superadmin/subscription-types/edit/:id',
+    loadComponent: () => import('./superadmin/subscription-type/subscription-type-form/subscription-type-form.component').then(m => m.SubscriptionTypeFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
+  {
+    path: 'superadmin/subscription-types/:id',
+    loadComponent: () => import('./superadmin/subscription-type/subscription-type-detail/subscription-type-detail.component').then(m => m.SubscriptionTypeDetailComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'SuperAdmin' }
+  },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

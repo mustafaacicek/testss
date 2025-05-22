@@ -1,0 +1,167 @@
+<app-admin-layout [username]="'Admin'" userRole="SuperAdmin">
+  <div class="subscription-type-form-container">
+    <div class="page-header">
+      <h1 class="page-title">{{ isEditMode ? 'Edit Subscription Type' : 'Create Subscription Type' }}</h1>
+      <div class="header-actions">
+        <button class="action-button cancel-button" (click)="cancel()">
+          <i class="fas fa-times"></i>
+          <span>Cancel</span>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="success-message">
+      <i class="fas fa-check-circle"></i>
+      {{ successMessage }}
+    </div>
+
+    <div class="form-card" *ngIf="!isLoading">
+      <form [formGroup]="subscriptionTypeForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Name <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="name" 
+            formControlName="name" 
+            [class.error]="hasError('name', 'required') || hasError('name', 'minlength') || hasError('name', 'maxlength')"
+          >
+          <div class="error-text" *ngIf="hasError('name', 'required')">
+            Name is required
+          </div>
+          <div class="error-text" *ngIf="hasError('name', 'minlength')">
+            Name must be at least 3 characters
+          </div>
+          <div class="error-text" *ngIf="hasError('name', 'maxlength')">
+            Name cannot exceed 50 characters
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="price">Price <span class="required">*</span></label>
+            <div class="input-with-icon">
+              <span class="currency-symbol">$</span>
+              <input 
+                type="number" 
+                id="price" 
+                formControlName="price" 
+                min="0" 
+                step="0.01"
+                [class.error]="hasError('price', 'required') || hasError('price', 'min')"
+              >
+            </div>
+            <div class="error-text" *ngIf="hasError('price', 'required')">
+              Price is required
+            </div>
+            <div class="error-text" *ngIf="hasError('price', 'min')">
+              Price must be a positive number or zero
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="durationDays">Duration (Days) <span class="required">*</span></label>
+            <input 
+              type="number" 
+              id="durationDays" 
+              formControlName="durationDays" 
+              min="1"
+              [class.error]="hasError('durationDays', 'required') || hasError('durationDays', 'min')"
+            >
+            <div class="error-text" *ngIf="hasError('durationDays', 'required')">
+              Duration is required
+            </div>
+            <div class="error-text" *ngIf="hasError('durationDays', 'min')">
+              Duration must be at least 1 day
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="maxClients">Max Clients <span class="required">*</span></label>
+            <input 
+              type="number" 
+              id="maxClients" 
+              formControlName="maxClients" 
+              min="0"
+              [class.error]="hasError('maxClients', 'required') || hasError('maxClients', 'min')"
+            >
+            <div class="error-text" *ngIf="hasError('maxClients', 'required')">
+              Max clients is required
+            </div>
+            <div class="error-text" *ngIf="hasError('maxClients', 'min')">
+              Max clients must be a positive number or zero
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="maxMatches">Max Matches <span class="required">*</span></label>
+            <input 
+              type="number" 
+              id="maxMatches" 
+              formControlName="maxMatches" 
+              min="0"
+              [class.error]="hasError('maxMatches', 'required') || hasError('maxMatches', 'min')"
+            >
+            <div class="error-text" *ngIf="hasError('maxMatches', 'required')">
+              Max matches is required
+            </div>
+            <div class="error-text" *ngIf="hasError('maxMatches', 'min')">
+              Max matches must be a positive number or zero
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea 
+            id="description" 
+            formControlName="description" 
+            rows="4"
+          ></textarea>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <div class="checkbox-wrapper">
+            <input 
+              type="checkbox" 
+              id="isActive" 
+              formControlName="isActive"
+            >
+            <label for="isActive">Active</label>
+          </div>
+          <div class="checkbox-hint">
+            Inactive subscription types will not be available for selection when creating or updating teams
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="action-button cancel-button" (click)="cancel()">
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            class="action-button submit-button" 
+            [disabled]="isSubmitting"
+          >
+            <i class="fas fa-circle-notch fa-spin" *ngIf="isSubmitting"></i>
+            <span *ngIf="!isSubmitting">{{ isEditMode ? 'Update' : 'Create' }}</span>
+            <span *ngIf="isSubmitting">{{ isEditMode ? 'Updating...' : 'Creating...' }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
+      <p>Loading subscription type data...</p>
+    </div>
+  </div>
+</app-admin-layout>
