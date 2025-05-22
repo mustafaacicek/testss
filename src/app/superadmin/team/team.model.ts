@@ -46,10 +46,3 @@ export interface TeamRequest {
   isActive?: boolean;
 }
 
-export interface SubscriptionType {
-  id: number;
-  name: string;
-  description?: string;
-  durationDays: number;
-  price: number;
-}

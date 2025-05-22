@@ -4,8 +4,10 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { TeamService } from '../team.service';
 import { CountryService } from '../../country/country.service';
-import { TeamResponse, TeamRequest, SubscriptionType } from '../team.model';
+import { SubscriptionTypeService } from '../../subscription-type/subscription-type.service';
+import { TeamResponse, TeamRequest } from '../team.model';
 import { CountryResponse } from '../../country/country.model';
+import { SubscriptionTypeResponse } from '../../subscription-type/subscription-type.model';
 import { AdminLayoutComponent } from '../../../shared/layout/admin-layout.component';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -25,23 +27,36 @@ export class TeamFormComponent implements OnInit {
   errorMessage = '';
   isLoading = false;
   countries: CountryResponse[] = [];
-  subscriptionTypes: SubscriptionType[] = [
-    { id: 1, name: 'Basic', description: 'Basic subscription plan', durationDays: 180, price: 99 },
-    { id: 2, name: 'Premium', description: 'Premium subscription with additional features', durationDays: 365, price: 199 },
-    { id: 3, name: 'Enterprise', description: 'Enterprise level subscription', durationDays: 730, price: 399 }
-  ];
+  subscriptionTypes: SubscriptionTypeResponse[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
     private teamService: TeamService,
     private countryService: CountryService,
+    private subscriptionTypeService: SubscriptionTypeService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.initForm();
-    this.loadCountries();
+    this.isLoading = true;
+    
+    // Load countries and subscription types in parallel
+    forkJoin([
+      this.countryService.getCountries().pipe(catchError(error => {
+        this.errorMessage = error.message || 'Failed to load countries';
+        return of([]);
+      })),
+      this.subscriptionTypeService.getSubscriptionTypes().pipe(catchError(error => {
+        this.errorMessage = error.message || 'Failed to load subscription types';
+        return of([]);
+      }))
+    ]).subscribe(([countries, subscriptionTypes]) => {
+      this.countries = countries;
+      this.subscriptionTypes = subscriptionTypes.filter(type => type.isActive);
+      this.isLoading = false;
+    });
     
     // Check if we're in edit mode
     this.route.params.subscribe(params => {
@@ -65,16 +80,7 @@ export class TeamFormComponent implements OnInit {
     });
   }
 
-  loadCountries(): void {
-    this.countryService.getCountries().subscribe({
-      next: (countries) => {
-        this.countries = countries;
-      },
-      error: (error) => {
-        this.errorMessage = error.message || 'Failed to load countries';
-      }
-    });
-  }
+
 
   loadTeam(id: number): void {
     this.isLoading = true;

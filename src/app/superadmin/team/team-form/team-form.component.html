@@ -121,7 +121,7 @@
               >
                 <option value="">No subscription</option>
                 <option *ngFor="let type of subscriptionTypes" [value]="type.id">
-                  {{ type.name }} ({{ type.durationDays / 30 }} months - ${{ type.price }})
+                  {{ type.name }} ({{ type.durationDays }} days - {{ type.price | currency }})
                 </option>
               </select>
             </div>
