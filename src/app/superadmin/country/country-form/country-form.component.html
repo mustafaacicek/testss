@@ -1,0 +1,105 @@
+<app-admin-layout [username]="'Admin'" userRole="SuperAdmin">
+  <div class="country-form-container">
+    <div class="page-header">
+      <h1 class="page-title">{{ formTitle }}</h1>
+      <div class="header-actions">
+        <a [routerLink]="['/superadmin/countries']" class="action-button back-button">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Countries</span>
+        </a>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-card" *ngIf="!isLoading">
+      <form [formGroup]="countryForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Country Name <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <i class="fas fa-globe"></i>
+            <input 
+              type="text" 
+              id="name" 
+              formControlName="name" 
+              placeholder="Enter country name"
+              [ngClass]="{'is-invalid': countryForm.get('name')?.invalid && countryForm.get('name')?.touched}"
+            >
+          </div>
+          <div class="error-message" *ngIf="countryForm.get('name')?.invalid && countryForm.get('name')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            <span *ngIf="countryForm.get('name')?.errors?.['required']">Country name is required</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="shortCode">Short Code <span class="required">*</span></label>
+          <div class="input-wrapper">
+            <i class="fas fa-code"></i>
+            <input 
+              type="text" 
+              id="shortCode" 
+              formControlName="shortCode" 
+              placeholder="Enter short code (max 3 characters)"
+              [ngClass]="{'is-invalid': countryForm.get('shortCode')?.invalid && countryForm.get('shortCode')?.touched}"
+            >
+          </div>
+          <div class="error-message" *ngIf="countryForm.get('shortCode')?.invalid && countryForm.get('shortCode')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            <span *ngIf="countryForm.get('shortCode')?.errors?.['required']">Short code is required</span>
+            <span *ngIf="countryForm.get('shortCode')?.errors?.['maxlength']">Short code must be maximum 3 characters</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="logoUrl">Logo URL</label>
+          <div class="input-wrapper">
+            <i class="fas fa-image"></i>
+            <input 
+              type="text" 
+              id="logoUrl" 
+              formControlName="logoUrl" 
+              placeholder="Enter logo URL (optional)"
+            >
+          </div>
+          <div class="logo-preview" *ngIf="countryForm.get('logoUrl')?.value">
+            <img [src]="countryForm.get('logoUrl')?.value" alt="Country logo preview">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <div class="input-wrapper textarea-wrapper">
+            <i class="fas fa-align-left"></i>
+            <textarea 
+              id="description" 
+              formControlName="description" 
+              placeholder="Enter country description (optional)"
+              rows="4"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="action-button cancel-button" [routerLink]="['/superadmin/countries']">
+            Cancel
+          </button>
+          <button type="submit" class="action-button submit-button" [disabled]="countryForm.invalid || isSubmitting">
+            <i class="fas" [ngClass]="isSubmitting ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+            <span>{{ submitButtonText }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
+      <p>Loading country data...</p>
+    </div>
+  </div>
+</app-admin-layout>

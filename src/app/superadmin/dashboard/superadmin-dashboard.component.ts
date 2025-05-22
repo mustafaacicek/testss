@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { AdminLayoutComponent } from '../../shared/layout/admin-layout.component';
 
 @Component({
   selector: 'app-superadmin-dashboard',
   standalone: true,
-  imports: [CommonModule, AdminLayoutComponent],
+  imports: [CommonModule, RouterModule, AdminLayoutComponent],
   templateUrl: './superadmin-dashboard.component.html',
   styleUrls: ['./superadmin-dashboard.component.scss']
 })

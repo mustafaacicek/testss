@@ -1,0 +1,73 @@
+<app-admin-layout [username]="'Admin'" userRole="SuperAdmin">
+  <div class="country-detail-container">
+    <div class="page-header">
+      <h1 class="page-title">Country Details</h1>
+      <div class="header-actions">
+        <a [routerLink]="['/superadmin/countries']" class="action-button back-button">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Countries</span>
+        </a>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ errorMessage }}
+    </div>
+
+    <div class="country-detail-card" *ngIf="!isLoading && country">
+      <div class="country-header">
+        <div class="country-logo">
+          <img *ngIf="country.logoUrl" [src]="country.logoUrl" [alt]="country.name + ' logo'">
+          <div *ngIf="!country.logoUrl" class="no-logo">
+            <i class="fas fa-flag"></i>
+          </div>
+        </div>
+        <div class="country-title">
+          <h2>{{ country.name }}</h2>
+          <div class="country-code">{{ country.shortCode }}</div>
+        </div>
+        <div class="country-actions">
+          <a [routerLink]="['/superadmin/countries/edit', country.id]" class="action-button edit-button">
+            <i class="fas fa-edit"></i>
+            <span>Edit</span>
+          </a>
+          <button class="action-button delete-button" (click)="deleteCountry()" [disabled]="country.teamCount > 0">
+            <i class="fas fa-trash"></i>
+            <span>Delete</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="country-body">
+        <div class="info-section">
+          <h3 class="section-title">Description</h3>
+          <p class="country-description" *ngIf="country.description">{{ country.description }}</p>
+          <p class="no-data" *ngIf="!country.description">No description available</p>
+        </div>
+
+        <div class="info-section">
+          <h3 class="section-title">Statistics</h3>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-futbol"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-title">Teams</div>
+                <div class="stat-value">{{ country.teamCount }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner">
+        <i class="fas fa-circle-notch fa-spin"></i>
+      </div>
+      <p>Loading country data...</p>
+    </div>
+  </div>
+</app-admin-layout>

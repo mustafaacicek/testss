@@ -14,21 +14,45 @@
       </div>
     </div>
     
-    <div class="dashboard-card">
-      <div class="card-header">
-        <h2>System Management</h2>
+    <div class="dashboard-grid">
+      <div class="dashboard-card" [routerLink]="['/superadmin/countries']">
+        <div class="card-header">
+          <h2>Country Management</h2>
+          <div class="card-icon">
+            <i class="fas fa-globe"></i>
+          </div>
+        </div>
+        <div class="card-content">
+          <p>Manage countries, including adding, editing, and removing country records.</p>
+          <div class="card-action">
+            <span>Manage Countries</span>
+            <i class="fas fa-arrow-right"></i>
+          </div>
+        </div>
       </div>
-      <div class="card-content">
-        <p>Advanced system management options for SuperAdmin users.</p>
+      
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h2>System Management</h2>
+          <div class="card-icon">
+            <i class="fas fa-cogs"></i>
+          </div>
+        </div>
+        <div class="card-content">
+          <p>Advanced system management options for SuperAdmin users.</p>
+        </div>
       </div>
-    </div>
-    
-    <div class="dashboard-card">
-      <div class="card-header">
-        <h2>Admin User Management</h2>
-      </div>
-      <div class="card-content">
-        <p>Manage admin users and their permissions.</p>
+      
+      <div class="dashboard-card">
+        <div class="card-header">
+          <h2>Admin User Management</h2>
+          <div class="card-icon">
+            <i class="fas fa-users-cog"></i>
+          </div>
+        </div>
+        <div class="card-content">
+          <p>Manage admin users and their permissions.</p>
+        </div>
       </div>
     </div>
   </div>
