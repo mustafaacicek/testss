@@ -1,0 +1,163 @@
+// Custom Variables
+$primary: #4f46e5;
+$secondary: #7c3aed;
+$success: #10b981;
+$danger: #ef4444;
+$warning: #f59e0b;
+$info: #3b82f6;
+$dark: #1e293b;
+$light: #f8fafc;
+
+// Gradients
+$gradient-primary: linear-gradient(135deg, $primary, $secondary);
+
+// Layout Variables
+$border-radius: 16px;
+$shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+$shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+.dashboard-container {
+  width: 100%;
+  
+  .dashboard-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: $dark;
+    position: relative;
+    display: inline-block;
+    
+    &:after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40px;
+      height: 4px;
+      background: $gradient-primary;
+      border-radius: 2px;
+    }
+  }
+}
+
+// Stats Grid
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+// Stats Card
+.stats-card {
+  background: white;
+  border-radius: $border-radius;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: $shadow-md;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $shadow-lg;
+  }
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: $gradient-primary;
+  }
+  
+  .stats-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    
+    &.primary {
+      background: rgba($primary, 0.1);
+      color: $primary;
+    }
+    
+    &.success {
+      background: rgba($success, 0.1);
+      color: $success;
+    }
+    
+    &.warning {
+      background: rgba($warning, 0.1);
+      color: $warning;
+    }
+    
+    &.info {
+      background: rgba($info, 0.1);
+      color: $info;
+    }
+    
+    &.danger {
+      background: rgba($danger, 0.1);
+      color: $danger;
+    }
+  }
+  
+  .stats-content {
+    flex: 1;
+    
+    .stats-title {
+      font-size: 0.875rem;
+      color: rgba($dark, 0.6);
+      margin-bottom: 0.5rem;
+    }
+    
+    .stats-value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: $dark;
+      margin: 0;
+    }
+  }
+}
+
+// Dashboard Card
+.dashboard-card {
+  background: white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-md;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: $shadow-lg;
+  }
+  
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $dark;
+      margin: 0;
+    }
+  }
+  
+  .card-content {
+    color: rgba($dark, 0.7);
+  }
+}

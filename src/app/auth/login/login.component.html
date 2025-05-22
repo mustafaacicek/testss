@@ -1,0 +1,67 @@
+<div class="login-page">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="logo">
+          <i class="fas fa-headphones-alt"></i>
+          <h1 class="logo-text">Fanla App</h1>
+        </div>
+        <p class="welcome-text">Welcome back! Please sign in to continue.</p>
+      </div>
+      
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <div class="input-wrapper">
+            <i class="fas fa-user"></i>
+            <input 
+              type="text" 
+              id="username" 
+              formControlName="username" 
+              placeholder="Enter your username"
+              [ngClass]="{'is-invalid': loginForm.get('username')?.invalid && loginForm.get('username')?.touched}"
+            >
+          </div>
+          <div class="error-message" *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            <span *ngIf="loginForm.get('username')?.errors?.['required']">Username is required</span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <i class="fas fa-lock"></i>
+            <input 
+              type="password" 
+              id="password" 
+              formControlName="password" 
+              placeholder="Enter your password"
+              [ngClass]="{'is-invalid': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
+            >
+          </div>
+          <div class="error-message" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            <i class="fas fa-exclamation-circle"></i>
+            <span *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</span>
+            <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+          </div>
+        </div>
+        
+        <div class="error-alert" *ngIf="errorMessage">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{ errorMessage }}
+        </div>
+        
+        <button type="submit" class="login-button" [disabled]="loginForm.invalid || isSubmitting">
+          <i class="fas fa-sign-in-alt"></i>
+          <span *ngIf="!isSubmitting">Sign In</span>
+          <span *ngIf="isSubmitting">Signing In...</span>
+        </button>
+      </form>
+      
+      <div class="login-footer">
+        <p>© 2025 Fanla App. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</div>

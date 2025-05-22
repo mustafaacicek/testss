@@ -1,0 +1,26 @@
+<app-admin-layout [username]="username" userRole="Admin">
+  <div class="dashboard-container">
+    <h1 class="dashboard-title">Admin Dashboard</h1>
+    
+    <div class="stats-grid">
+      <div class="stats-card" *ngFor="let stat of statsData">
+        <div class="stats-icon" [ngClass]="stat.iconClass">
+          <i class="fas fa-{{ stat.icon }}"></i>
+        </div>
+        <div class="stats-content">
+          <div class="stats-title">{{ stat.title }}</div>
+          <h3 class="stats-value">{{ stat.value }}</h3>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h2>Recent Activity</h2>
+      </div>
+      <div class="card-content">
+        <p>No recent activities to display.</p>
+      </div>
+    </div>
+  </div>
+</app-admin-layout>

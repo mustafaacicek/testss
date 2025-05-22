@@ -1,0 +1,82 @@
+<div class="admin-layout" [class.sidebar-collapsed]="isSidebarCollapsed">
+  <!-- Mobile Toggle Button -->
+  <button class="mobile-toggle" [class.active]="isMobileMenuOpen" (click)="toggleMobileMenu()">
+    <i class="fas" [class.fa-bars]="!isMobileMenuOpen" [class.fa-times]="isMobileMenuOpen"></i>
+  </button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="isSidebarCollapsed" [class.mobile-open]="isMobileMenuOpen">
+    <div class="sidebar-header">
+      <div class="logo">
+        <i class="fas fa-headphones-alt"></i>
+        <span class="logo-text" *ngIf="!isSidebarCollapsed">Fanla App</span>
+      </div>
+      <button class="toggle-btn" (click)="toggleSidebar()">
+        <i class="fas" [class.fa-chevron-left]="!isSidebarCollapsed" [class.fa-chevron-right]="isSidebarCollapsed"></i>
+      </button>
+    </div>
+
+    <div class="user-profile" *ngIf="!isSidebarCollapsed">
+      <div class="avatar">
+        <span>{{ userInitials }}</span>
+      </div>
+      <div class="user-info">
+        <h4 class="user-name">{{ username }}</h4>
+        <p class="user-role">{{ userRole }}</p>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/dashboard" routerLinkActive="active">
+            <i class="fas fa-home"></i>
+            <span class="nav-text" *ngIf="!isSidebarCollapsed">Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item" *ngIf="userRole === 'SuperAdmin'">
+          <a class="nav-link" routerLink="/users" routerLinkActive="active">
+            <i class="fas fa-users"></i>
+            <span class="nav-text" *ngIf="!isSidebarCollapsed">Users</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/sounds" routerLinkActive="active">
+            <i class="fas fa-music"></i>
+            <span class="nav-text" *ngIf="!isSidebarCollapsed">Sounds</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/lyrics" routerLinkActive="active">
+            <i class="fas fa-file-alt"></i>
+            <span class="nav-text" *ngIf="!isSidebarCollapsed">Lyrics</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/playlists" routerLinkActive="active">
+            <i class="fas fa-list"></i>
+            <span class="nav-text" *ngIf="!isSidebarCollapsed">Playlists</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/settings" routerLinkActive="active">
+            <i class="fas fa-cog"></i>
+            <span class="nav-text" *ngIf="!isSidebarCollapsed">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span *ngIf="!isSidebarCollapsed">Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <ng-content></ng-content>
+  </main>
+</div>

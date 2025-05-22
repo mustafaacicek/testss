@@ -1,0 +1,35 @@
+<app-admin-layout [username]="username" userRole="SuperAdmin">
+  <div class="dashboard-container">
+    <h1 class="dashboard-title">SuperAdmin Dashboard</h1>
+    
+    <div class="stats-grid">
+      <div class="stats-card" *ngFor="let stat of statsData">
+        <div class="stats-icon" [ngClass]="stat.iconClass">
+          <i class="fas fa-{{ stat.icon }}"></i>
+        </div>
+        <div class="stats-content">
+          <div class="stats-title">{{ stat.title }}</div>
+          <h3 class="stats-value">{{ stat.value }}</h3>
+        </div>
+      </div>
+    </div>
+    
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h2>System Management</h2>
+      </div>
+      <div class="card-content">
+        <p>Advanced system management options for SuperAdmin users.</p>
+      </div>
+    </div>
+    
+    <div class="dashboard-card">
+      <div class="card-header">
+        <h2>Admin User Management</h2>
+      </div>
+      <div class="card-content">
+        <p>Manage admin users and their permissions.</p>
+      </div>
+    </div>
+  </div>
+</app-admin-layout>
