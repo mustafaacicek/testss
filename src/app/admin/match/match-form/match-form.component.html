@@ -1,0 +1,206 @@
+<app-admin-layout [username]="'Admin'" userRole="Admin">
+  <div class="match-form-container">
+    <div class="page-header">
+      <h1 class="page-title">{{ isEditMode ? 'Edit Match' : 'Create Match' }}</h1>
+      <div class="header-actions">
+        <button class="action-button secondary" (click)="cancel()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="notification success" *ngIf="successMessage">
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="successMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="notification error" *ngIf="errorMessage">
+      <div class="notification-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="errorMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="form-card" *ngIf="!isLoading">
+      <form [formGroup]="matchForm" (ngSubmit)="saveMatch()">
+        <!-- Match Date -->
+        <div class="form-group">
+          <label for="matchDate">Match Date and Time</label>
+          <input 
+            type="datetime-local" 
+            id="matchDate" 
+            formControlName="matchDate" 
+            class="form-control"
+            [class.is-invalid]="isInvalid('matchDate')"
+          >
+          <div class="form-error" *ngIf="isInvalid('matchDate')">
+            Match date and time is required
+          </div>
+        </div>
+
+        <!-- Opponent Type Selection -->
+        <div class="form-group">
+          <label>Opponent Type</label>
+          <div class="opponent-type-selector">
+            <button 
+              type="button" 
+              class="type-button" 
+              [class.active]="opponentType === 'team'"
+              (click)="onOpponentTypeChange('team')"
+            >
+              <i class="fas fa-users"></i>
+              Select Team
+            </button>
+            <button 
+              type="button" 
+              class="type-button" 
+              [class.active]="opponentType === 'manual'"
+              (click)="onOpponentTypeChange('manual')"
+            >
+              <i class="fas fa-keyboard"></i>
+              Manual Entry
+            </button>
+          </div>
+        </div>
+
+        <!-- Team Opponent Selection -->
+        <div class="form-group" *ngIf="opponentType === 'team'">
+          <label for="opponentTeamId">Select Opponent Team</label>
+          <select 
+            id="opponentTeamId" 
+            formControlName="opponentTeamId" 
+            class="form-control"
+            [class.is-invalid]="opponentType === 'team' && isInvalid('opponentTeamId')"
+          >
+            <option [ngValue]="null">-- Select Opponent Team --</option>
+            <option *ngFor="let opponent of availableOpponents" [ngValue]="opponent.id">
+              {{ opponent.name }}
+            </option>
+          </select>
+          <div class="form-error" *ngIf="opponentType === 'team' && isInvalid('opponentTeamId')">
+            Please select an opponent team
+          </div>
+        </div>
+
+        <!-- Manual Opponent Entry -->
+        <div *ngIf="opponentType === 'manual'">
+          <div class="form-group">
+            <label for="manualOpponentName">Opponent Name</label>
+            <input 
+              type="text" 
+              id="manualOpponentName" 
+              formControlName="manualOpponentName" 
+              class="form-control"
+              placeholder="Enter opponent team name"
+              [class.is-invalid]="opponentType === 'manual' && isInvalid('manualOpponentName')"
+            >
+            <div class="form-error" *ngIf="opponentType === 'manual' && isInvalid('manualOpponentName')">
+              Opponent name is required
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="manualOpponentLogo">Opponent Logo URL</label>
+            <input 
+              type="text" 
+              id="manualOpponentLogo" 
+              formControlName="manualOpponentLogo" 
+              class="form-control"
+              placeholder="Enter opponent logo URL"
+            >
+            <div class="logo-preview" *ngIf="matchForm.get('manualOpponentLogo')?.value">
+              <img [src]="matchForm.get('manualOpponentLogo')?.value" alt="Opponent Logo Preview">
+            </div>
+          </div>
+        </div>
+
+        <!-- Match Status -->
+        <div class="form-group">
+          <label for="status">Match Status</label>
+          <select 
+            id="status" 
+            formControlName="status" 
+            class="form-control"
+            [class.is-invalid]="isInvalid('status')"
+          >
+            <option *ngFor="let status of matchStatuses" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+          <div class="form-error" *ngIf="isInvalid('status')">
+            Match status is required
+          </div>
+        </div>
+
+        <!-- Match Score -->
+        <div class="form-group score-group">
+          <label>Match Score</label>
+          <div class="score-inputs">
+            <div class="score-input">
+              <label for="homeScore">Home</label>
+              <input 
+                type="number" 
+                id="homeScore" 
+                formControlName="homeScore" 
+                class="form-control"
+                min="0"
+                [class.is-invalid]="isInvalid('homeScore')"
+              >
+            </div>
+            <div class="score-separator">:</div>
+            <div class="score-input">
+              <label for="awayScore">Away</label>
+              <input 
+                type="number" 
+                id="awayScore" 
+                formControlName="awayScore" 
+                class="form-control"
+                min="0"
+                [class.is-invalid]="isInvalid('awayScore')"
+              >
+            </div>
+          </div>
+          <div class="form-error" *ngIf="isInvalid('homeScore') || isInvalid('awayScore')">
+            Scores must be non-negative numbers
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="action-button primary" 
+            [disabled]="matchForm.invalid || isSaving"
+          >
+            <i class="fas fa-save"></i>
+            {{ isEditMode ? 'Update Match' : 'Create Match' }}
+          </button>
+          <button 
+            type="button" 
+            class="action-button secondary" 
+            (click)="cancel()"
+          >
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <p class="loading-text">Loading...</p>
+    </div>
+  </div>
+</app-admin-layout>

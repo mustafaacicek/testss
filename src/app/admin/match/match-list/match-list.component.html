@@ -1,0 +1,171 @@
+<app-admin-layout [username]="'Admin'" userRole="Admin">
+  <div class="match-container">
+    <div class="page-header">
+      <h1 class="page-title">Match Management</h1>
+      <div class="header-actions">
+        <a [routerLink]="['/admin/matches/create']" class="action-button create-button">
+          <i class="fas fa-plus"></i>
+          <span>Add Match</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="fas fa-search"></i>
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            placeholder="Search opponents..."
+            (keyup.enter)="searchMatches()"
+          >
+          <button *ngIf="searchQuery" class="clear-search" (click)="clearSearch()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="filter-wrapper">
+          <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+            <option value="ALL">All Statuses</option>
+            <option *ngFor="let status of matchStatuses" [value]="status">{{ status }}</option>
+          </select>
+        </div>
+        <button class="search-button" (click)="searchMatches()">
+          <i class="fas fa-search"></i>
+          Search
+        </button>
+      </div>
+    </div>
+
+    <div class="notification success" *ngIf="successMessage">
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="successMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="notification error" *ngIf="errorMessage">
+      <div class="notification-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="errorMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="match-cards-container" *ngIf="!isLoading && filteredMatches.length > 0">
+      <div class="match-card" *ngFor="let match of filteredMatches">
+        <div class="match-header">
+          <span class="match-date">{{ formatDate(match.matchDate) }}</span>
+          <span class="status-badge" [ngClass]="getStatusClass(match.status)">{{ match.status }}</span>
+        </div>
+        
+        <div class="match-teams">
+          <div class="team home-team">
+            <img [src]="match.teamLogo" alt="{{ match.teamName }}" class="team-logo">
+            <span class="team-name">{{ match.teamName }}</span>
+          </div>
+          
+          <div class="match-score">
+            <span class="score">{{ match.homeScore }}</span>
+            <span class="separator">:</span>
+            <span class="score">{{ match.awayScore }}</span>
+          </div>
+          
+          <div class="team away-team">
+            <img [src]="getOpponentLogo(match)" alt="{{ getOpponentName(match) }}" class="team-logo">
+            <span class="team-name">{{ getOpponentName(match) }}</span>
+          </div>
+        </div>
+        
+        <div class="match-actions">
+          <div class="status-actions" *ngIf="match.status !== MatchStatus.FINISHED && match.status !== MatchStatus.CANCELLED">
+            <button 
+              *ngIf="match.status === MatchStatus.PLANNED" 
+              class="action-button status-button start" 
+              (click)="updateMatchStatus(match.id, MatchStatus.PLAYING)"
+            >
+              <i class="fas fa-play"></i>
+              Start Match
+            </button>
+            
+            <button 
+              *ngIf="match.status === MatchStatus.PLAYING" 
+              class="action-button status-button finish" 
+              (click)="updateMatchStatus(match.id, MatchStatus.FINISHED)"
+            >
+              <i class="fas fa-flag-checkered"></i>
+              Finish Match
+            </button>
+            
+            <button 
+              *ngIf="match.status === MatchStatus.PLANNED" 
+              class="action-button status-button cancel" 
+              (click)="updateMatchStatus(match.id, MatchStatus.CANCELLED)"
+            >
+              <i class="fas fa-ban"></i>
+              Cancel Match
+            </button>
+            
+            <button 
+              *ngIf="match.status === MatchStatus.PLANNED" 
+              class="action-button status-button postpone" 
+              (click)="updateMatchStatus(match.id, MatchStatus.POSTPONED)"
+            >
+              <i class="fas fa-calendar-alt"></i>
+              Postpone Match
+            </button>
+          </div>
+          
+          <div class="item-actions">
+            <a [routerLink]="['/admin/matches', match.id]" class="action-icon view" title="View">
+              <i class="fas fa-eye"></i>
+            </a>
+            <a [routerLink]="['/admin/matches/edit', match.id]" class="action-icon edit" title="Edit">
+              <i class="fas fa-edit"></i>
+            </a>
+            <button class="action-icon delete" (click)="deleteMatch(match.id)" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state-container" *ngIf="!isLoading && filteredMatches.length === 0">
+      <div class="empty-state">
+        <div class="empty-state-icon">
+          <i class="fas fa-futbol"></i>
+        </div>
+        <h3 class="empty-state-title">No Matches Found</h3>
+        <p class="empty-state-message" *ngIf="searchQuery || statusFilter !== 'ALL'">
+          No matches match your search criteria. Try a different search term or clear the filters.
+        </p>
+        <p class="empty-state-message" *ngIf="!searchQuery && statusFilter === 'ALL' && matches.length === 0">
+          There are no matches for your team yet. Add your first match to get started.
+        </p>
+        <div class="empty-state-actions">
+          <a *ngIf="!searchQuery && statusFilter === 'ALL' && matches.length === 0" [routerLink]="['/admin/matches/create']" class="action-button">
+            <i class="fas fa-plus"></i>
+            <span>Add Match</span>
+          </a>
+          <button *ngIf="searchQuery || statusFilter !== 'ALL'" class="secondary-button" (click)="clearSearch()">
+            <i class="fas fa-times"></i>
+            <span>Clear Filters</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <p class="loading-text">Loading matches...</p>
+    </div>
+  </div>
+</app-admin-layout>

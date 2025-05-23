@@ -1,0 +1,122 @@
+<div class="match-summary-container">
+  <div class="match-summary-section">
+    <div class="section-header">
+      <h3 class="section-title">Upcoming Matches</h3>
+      <a [routerLink]="['/admin/matches']" [queryParams]="{filter: 'upcoming'}" class="view-all-link">
+        View All <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+    
+    <div class="match-list" *ngIf="!isLoadingUpcoming && upcomingMatches.length > 0">
+      <div class="match-card" *ngFor="let match of upcomingMatches">
+        <div class="match-header">
+          <span class="match-date">{{ formatDate(match.matchDate) }}</span>
+          <span class="status-badge" [ngClass]="getStatusClass(match.status)">{{ match.status }}</span>
+        </div>
+        
+        <div class="match-teams">
+          <div class="team home-team">
+            <img [src]="match.teamLogo" alt="{{ match.teamName }}" class="team-logo">
+            <span class="team-name">{{ match.teamName }}</span>
+          </div>
+          
+          <div class="match-score">
+            <span class="score">{{ match.homeScore }}</span>
+            <span class="separator">:</span>
+            <span class="score">{{ match.awayScore }}</span>
+          </div>
+          
+          <div class="team away-team">
+            <img [src]="getOpponentLogo(match)" alt="{{ getOpponentName(match) }}" class="team-logo">
+            <span class="team-name">{{ getOpponentName(match) }}</span>
+          </div>
+        </div>
+        
+        <div class="match-actions">
+          <a [routerLink]="['/admin/matches', match.id]" class="view-match-link">
+            View Details <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="empty-state" *ngIf="!isLoadingUpcoming && upcomingMatches.length === 0">
+      <div class="empty-state-icon">
+        <i class="fas fa-calendar"></i>
+      </div>
+      <p class="empty-state-message">No upcoming matches scheduled.</p>
+      <a [routerLink]="['/admin/matches/create']" class="action-button">
+        <i class="fas fa-plus"></i>
+        Schedule a Match
+      </a>
+    </div>
+    
+    <div class="loading-state" *ngIf="isLoadingUpcoming">
+      <div class="spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <p class="loading-text">Loading upcoming matches...</p>
+    </div>
+  </div>
+  
+  <div class="match-summary-section">
+    <div class="section-header">
+      <h3 class="section-title">Recent Results</h3>
+      <a [routerLink]="['/admin/matches']" [queryParams]="{filter: 'past'}" class="view-all-link">
+        View All <i class="fas fa-chevron-right"></i>
+      </a>
+    </div>
+    
+    <div class="match-list" *ngIf="!isLoadingPast && pastMatches.length > 0">
+      <div class="match-card" *ngFor="let match of pastMatches">
+        <div class="match-header">
+          <span class="match-date">{{ formatDate(match.matchDate) }}</span>
+          <span class="status-badge" [ngClass]="getStatusClass(match.status)">{{ match.status }}</span>
+        </div>
+        
+        <div class="match-teams">
+          <div class="team home-team">
+            <img [src]="match.teamLogo" alt="{{ match.teamName }}" class="team-logo">
+            <span class="team-name">{{ match.teamName }}</span>
+          </div>
+          
+          <div class="match-score">
+            <span class="score">{{ match.homeScore }}</span>
+            <span class="separator">:</span>
+            <span class="score">{{ match.awayScore }}</span>
+          </div>
+          
+          <div class="team away-team">
+            <img [src]="getOpponentLogo(match)" alt="{{ getOpponentName(match) }}" class="team-logo">
+            <span class="team-name">{{ getOpponentName(match) }}</span>
+          </div>
+        </div>
+        
+        <div class="match-actions">
+          <a [routerLink]="['/admin/matches', match.id]" class="view-match-link">
+            View Details <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+    
+    <div class="empty-state" *ngIf="!isLoadingPast && pastMatches.length === 0">
+      <div class="empty-state-icon">
+        <i class="fas fa-history"></i>
+      </div>
+      <p class="empty-state-message">No past match results available.</p>
+    </div>
+    
+    <div class="loading-state" *ngIf="isLoadingPast">
+      <div class="spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <p class="loading-text">Loading past matches...</p>
+    </div>
+  </div>
+  
+  <div class="error-message" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-circle"></i>
+    <span>{{ errorMessage }}</span>
+  </div>
+</div>

@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
 import { AdminLayoutComponent } from '../../shared/layout/admin-layout.component';
+import { AuthService } from '../../services/auth.service';
+import { MatchSummaryComponent } from '../match/match-summary/match-summary.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, AdminLayoutComponent],
+  imports: [CommonModule, RouterModule, AdminLayoutComponent, MatchSummaryComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
 })
@@ -23,7 +24,7 @@ export class AdminDashboardComponent implements OnInit {
     private authService: AuthService,
     private router: Router
   ) {}
-
+  
   ngOnInit(): void {
     if (!this.authService.isLoggedIn() || !this.authService.isAdmin()) {
       this.router.navigate(['/login']);

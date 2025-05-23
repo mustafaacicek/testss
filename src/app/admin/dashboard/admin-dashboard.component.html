@@ -29,14 +29,25 @@
           <a [routerLink]="['/admin/sounds']" class="action-button">Manage Sounds</a>
         </div>
       </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-futbol"></i>
+        </div>
+        <div class="feature-content">
+          <h3 class="feature-title">Match Management</h3>
+          <p class="feature-description">Manage your team's matches. Create, update, and track match results.</p>
+          <a [routerLink]="['/admin/matches']" class="action-button">Manage Matches</a>
+        </div>
+      </div>
     </div>
     
     <div class="dashboard-card">
       <div class="card-header">
-        <h2>Recent Activity</h2>
+        <h2>Match Schedule</h2>
       </div>
       <div class="card-content">
-        <p>No recent activities to display.</p>
+        <app-match-summary></app-match-summary>
       </div>
     </div>
   </div>

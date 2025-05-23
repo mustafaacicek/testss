@@ -1,0 +1,542 @@
+// Custom Variables
+$primary: #6366f1;
+$secondary: #8b5cf6;
+$success: #10b981;
+$danger: #ef4444;
+$warning: #f59e0b;
+$info: #3b82f6;
+$dark: #1e293b;
+$light: #f8fafc;
+
+// Gradients
+$gradient-primary: linear-gradient(135deg, $primary, $secondary);
+
+// Layout Variables
+$border-radius: 16px;
+$border-radius-sm: 8px;
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+// Container
+.match-detail-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+// Page Header
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  
+  .page-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $dark;
+    margin: 0;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+}
+
+// Action Button
+.action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: $primary;
+  color: white;
+  border-radius: $border-radius-sm;
+  font-weight: 500;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: darken($primary, 5%);
+  }
+  
+  &.secondary {
+    background-color: #e5e7eb;
+    color: #4b5563;
+    
+    &:hover {
+      background-color: darken(#e5e7eb, 5%);
+    }
+  }
+  
+  &.edit {
+    background-color: $warning;
+    
+    &:hover {
+      background-color: darken($warning, 5%);
+    }
+  }
+  
+  &.danger {
+    background-color: $danger;
+    
+    &:hover {
+      background-color: darken($danger, 5%);
+    }
+  }
+  
+  &.status-button {
+    font-size: 0.875rem;
+    
+    &.start {
+      background-color: $success;
+      
+      &:hover {
+        background-color: darken($success, 5%);
+      }
+    }
+    
+    &.finish {
+      background-color: $info;
+      
+      &:hover {
+        background-color: darken($info, 5%);
+      }
+    }
+    
+    &.cancel {
+      background-color: $danger;
+      
+      &:hover {
+        background-color: darken($danger, 5%);
+      }
+    }
+    
+    &.postpone {
+      background-color: $warning;
+      
+      &:hover {
+        background-color: darken($warning, 5%);
+      }
+    }
+  }
+  
+  i {
+    font-size: 0.875rem;
+  }
+}
+
+// Notifications
+.notification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: $border-radius-sm;
+  margin-bottom: 1rem;
+  
+  &.success {
+    background-color: rgba($success, 0.1);
+    border-left: 4px solid $success;
+  }
+  
+  &.error {
+    background-color: rgba($danger, 0.1);
+    border-left: 4px solid $danger;
+  }
+  
+  .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    
+    i {
+      font-size: 1.25rem;
+    }
+    
+    span {
+      font-weight: 500;
+    }
+  }
+  
+  .notification-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+}
+
+.notification.success .notification-content i {
+  color: $success;
+}
+
+.notification.error .notification-content i {
+  color: $danger;
+}
+
+.notification.success .notification-content span {
+  color: darken($success, 10%);
+}
+
+.notification.error .notification-content span {
+  color: darken($danger, 10%);
+}
+
+// Match Detail Card
+.match-detail-card {
+  background-color: white;
+  border-radius: $border-radius;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+// Match Header
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  
+  .match-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    
+    .match-date {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #4b5563;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      
+      &.status-planned {
+        background-color: rgba($info, 0.1);
+        color: $info;
+      }
+      
+      &.status-playing {
+        background-color: rgba($success, 0.1);
+        color: $success;
+      }
+      
+      &.status-finished {
+        background-color: rgba($dark, 0.1);
+        color: $dark;
+      }
+      
+      &.status-cancelled {
+        background-color: rgba($danger, 0.1);
+        color: $danger;
+      }
+      
+      &.status-postponed {
+        background-color: rgba($warning, 0.1);
+        color: $warning;
+      }
+    }
+  }
+  
+  .match-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+// Match Teams
+.match-teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 1rem;
+  
+  .team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    width: 40%;
+    
+    .team-logo {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      border-radius: 50%;
+      background-color: #f9fafb;
+      padding: 0.25rem;
+      border: 1px solid #e5e7eb;
+    }
+    
+    .team-name {
+      font-weight: 600;
+      color: $dark;
+      text-align: center;
+      font-size: 1rem;
+    }
+  }
+  
+  .match-score {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: relative;
+    
+    .score {
+      font-size: 2rem;
+      font-weight: 700;
+      color: $dark;
+      width: 40px;
+      text-align: center;
+    }
+    
+    .separator {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #9ca3af;
+    }
+    
+    .edit-score-button {
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #f3f4f6;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #6b7280;
+      transition: all 0.2s;
+      
+      &:hover {
+        background-color: #e5e7eb;
+        color: $primary;
+      }
+    }
+  }
+  
+  .match-score-edit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    
+    .score-inputs {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      .score-input {
+        width: 50px;
+        height: 40px;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        border: 1px solid #e5e7eb;
+        border-radius: $border-radius-sm;
+        outline: none;
+        
+        &:focus {
+          border-color: $primary;
+          box-shadow: 0 0 0 3px rgba($primary, 0.1);
+        }
+      }
+      
+      .separator {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #9ca3af;
+      }
+    }
+    
+    .score-actions {
+      display: flex;
+      gap: 0.5rem;
+      
+      .score-button {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        
+        &.save {
+          background-color: $success;
+          color: white;
+          
+          &:hover {
+            background-color: darken($success, 5%);
+          }
+          
+          &:disabled {
+            background-color: lighten($success, 20%);
+            cursor: not-allowed;
+          }
+        }
+        
+        &.cancel {
+          background-color: $danger;
+          color: white;
+          
+          &:hover {
+            background-color: darken($danger, 5%);
+          }
+          
+          &:disabled {
+            background-color: lighten($danger, 20%);
+            cursor: not-allowed;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Match Status Actions
+.match-status-actions {
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+  
+  .status-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+}
+
+// Match Details
+.match-details {
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    
+    .detail-label {
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-transform: uppercase;
+    }
+    
+    .detail-value {
+      font-size: 0.875rem;
+      color: $dark;
+      font-weight: 500;
+    }
+  }
+}
+
+// Loading State
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 0;
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: relative;
+    margin-bottom: 1rem;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 3px solid rgba($primary, 0.1);
+    }
+    
+    .spinner-inner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 3px solid transparent;
+      border-top-color: $primary;
+      animation: spin 1s linear infinite;
+    }
+  }
+  
+  .loading-text {
+    color: #6b7280;
+    font-weight: 500;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Media Queries
+@media (max-width: 768px) {
+  .match-header {
+    flex-direction: column;
+    gap: 1rem;
+    
+    .match-info {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .match-actions {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  .match-teams {
+    flex-direction: column;
+    gap: 1.5rem;
+    
+    .team {
+      width: 100%;
+    }
+    
+    .match-score {
+      order: 3;
+    }
+  }
+}

@@ -42,6 +42,30 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { role: 'Admin' }
   },
+  {
+    path: 'admin/matches',
+    loadComponent: () => import('./admin/match/match-list/match-list.component').then(m => m.MatchListComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
+  {
+    path: 'admin/matches/create',
+    loadComponent: () => import('./admin/match/match-form/match-form.component').then(m => m.MatchFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
+  {
+    path: 'admin/matches/edit/:id',
+    loadComponent: () => import('./admin/match/match-form/match-form.component').then(m => m.MatchFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
+  {
+    path: 'admin/matches/:id',
+    loadComponent: () => import('./admin/match/match-detail/match-detail.component').then(m => m.MatchDetailComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
   { 
     path: 'superadmin', 
     loadComponent: () => import('./superadmin/dashboard/superadmin-dashboard.component').then(m => m.SuperAdminDashboardComponent),

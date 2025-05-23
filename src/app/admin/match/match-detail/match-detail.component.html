@@ -1,0 +1,168 @@
+<app-admin-layout [username]="'Admin'" userRole="Admin">
+  <div class="match-detail-container">
+    <div class="page-header">
+      <h1 class="page-title">Match Details</h1>
+      <div class="header-actions">
+        <a [routerLink]="['/admin/matches']" class="action-button secondary">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Matches</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="notification success" *ngIf="successMessage">
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="successMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="notification error" *ngIf="errorMessage">
+      <div class="notification-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="errorMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="match-detail-card" *ngIf="match && !isLoading">
+      <div class="match-header">
+        <div class="match-info">
+          <span class="match-date">{{ formatDate(match.matchDate) }}</span>
+          <span class="status-badge" [ngClass]="getStatusClass(match.status)">{{ match.status }}</span>
+        </div>
+        <div class="match-actions">
+          <a [routerLink]="['/admin/matches/edit', match.id]" class="action-button edit">
+            <i class="fas fa-edit"></i>
+            Edit Match
+          </a>
+          <button class="action-button danger" (click)="deleteMatch()">
+            <i class="fas fa-trash"></i>
+            Delete Match
+          </button>
+        </div>
+      </div>
+      
+      <div class="match-teams">
+        <div class="team home-team">
+          <img [src]="match.teamLogo" alt="{{ match.teamName }}" class="team-logo">
+          <span class="team-name">{{ match.teamName }}</span>
+        </div>
+        
+        <div class="match-score" *ngIf="!editingScore">
+          <span class="score">{{ match.homeScore }}</span>
+          <span class="separator">:</span>
+          <span class="score">{{ match.awayScore }}</span>
+          <button class="edit-score-button" (click)="startEditingScore()" *ngIf="!isUpdating">
+            <i class="fas fa-edit"></i>
+          </button>
+        </div>
+        
+        <div class="match-score-edit" *ngIf="editingScore">
+          <div class="score-inputs">
+            <input 
+              type="number" 
+              [(ngModel)]="homeScore" 
+              class="score-input" 
+              min="0"
+            >
+            <span class="separator">:</span>
+            <input 
+              type="number" 
+              [(ngModel)]="awayScore" 
+              class="score-input" 
+              min="0"
+            >
+          </div>
+          <div class="score-actions">
+            <button class="score-button save" (click)="saveScore()" [disabled]="isUpdating">
+              <i class="fas fa-save"></i>
+            </button>
+            <button class="score-button cancel" (click)="cancelEditingScore()" [disabled]="isUpdating">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="team away-team">
+          <img [src]="getOpponentLogo()" alt="{{ getOpponentName() }}" class="team-logo">
+          <span class="team-name">{{ getOpponentName() }}</span>
+        </div>
+      </div>
+      
+      <div class="match-status-actions" *ngIf="!isUpdating">
+        <div class="status-buttons" *ngIf="match.status !== MatchStatus.FINISHED && match.status !== MatchStatus.CANCELLED">
+          <button 
+            *ngIf="match.status === MatchStatus.PLANNED" 
+            class="action-button status-button start" 
+            (click)="updateMatchStatus(MatchStatus.PLAYING)"
+          >
+            <i class="fas fa-play"></i>
+            Start Match
+          </button>
+          
+          <button 
+            *ngIf="match.status === MatchStatus.PLAYING" 
+            class="action-button status-button finish" 
+            (click)="updateMatchStatus(MatchStatus.FINISHED)"
+          >
+            <i class="fas fa-flag-checkered"></i>
+            Finish Match
+          </button>
+          
+          <button 
+            *ngIf="match.status === MatchStatus.PLANNED" 
+            class="action-button status-button cancel" 
+            (click)="updateMatchStatus(MatchStatus.CANCELLED)"
+          >
+            <i class="fas fa-ban"></i>
+            Cancel Match
+          </button>
+          
+          <button 
+            *ngIf="match.status === MatchStatus.PLANNED" 
+            class="action-button status-button postpone" 
+            (click)="updateMatchStatus(MatchStatus.POSTPONED)"
+          >
+            <i class="fas fa-calendar-alt"></i>
+            Postpone Match
+          </button>
+        </div>
+      </div>
+      
+      <div class="match-details">
+        <div class="detail-item">
+          <span class="detail-label">Created At</span>
+          <span class="detail-value">{{ formatDate(match.createdAt) }}</span>
+        </div>
+        
+        <div class="detail-item">
+          <span class="detail-label">Team ID</span>
+          <span class="detail-value">{{ match.teamId }}</span>
+        </div>
+        
+        <div class="detail-item" *ngIf="match.opponentTeamId">
+          <span class="detail-label">Opponent Team ID</span>
+          <span class="detail-value">{{ match.opponentTeamId }}</span>
+        </div>
+        
+        <div class="detail-item" *ngIf="match.manualOpponentName">
+          <span class="detail-label">Manual Opponent</span>
+          <span class="detail-value">{{ match.manualOpponentName }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <p class="loading-text">Loading match details...</p>
+    </div>
+  </div>
+</app-admin-layout>
