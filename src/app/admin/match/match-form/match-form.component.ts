@@ -83,9 +83,12 @@ export class MatchFormComponent implements OnInit {
           this.opponentType = 'manual';
         }
         
-        // Format the date for the form
-        const matchDate = new Date(match.matchDate);
-        const formattedDate = matchDate.toISOString().slice(0, 16); // Format: "YYYY-MM-DDThh:mm"
+        // Format the date for the form by directly parsing the ISO string
+        // This preserves the exact time as it comes from the server without any timezone conversion
+        const parts = match.matchDate.split('T');
+        const datePart = parts[0]; // YYYY-MM-DD
+        const timePart = parts[1].substring(0, 5); // HH:MM
+        const formattedDate = `${datePart}T${timePart}`; // Format: "YYYY-MM-DDThh:mm"
         
         this.matchForm.patchValue({
           opponentTeamId: match.opponentTeamId,

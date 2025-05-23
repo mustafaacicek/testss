@@ -170,14 +170,18 @@ export class MatchDetailComponent implements OnInit {
   formatDate(dateString: string | undefined): string {
     if (!dateString) return '';
     
-    const date = new Date(dateString);
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    // Create a date object directly from the ISO string without timezone conversion
+    // Extract date parts directly from the string to avoid browser's automatic timezone conversion
+    const parts = dateString.split('T');
+    const datePart = parts[0]; // YYYY-MM-DD
+    const timePart = parts[1].substring(0, 5); // HH:MM
+    
+    const [year, month, day] = datePart.split('-').map(Number);
+    
+    // Format the date manually to match the server's time exactly in 24-hour format
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    return `${monthNames[month-1]} ${day}, ${year}, ${timePart}`;
   }
 
   getStatusClass(status: MatchStatus | undefined): string {
