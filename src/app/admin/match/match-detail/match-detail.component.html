@@ -41,6 +41,10 @@
             <i class="fas fa-edit"></i>
             Edit Match
           </a>
+          <a [routerLink]="['/admin/matches/sound', match.id]" class="action-button sound">
+            <i class="fas fa-music"></i>
+            Sound Management
+          </a>
           <button class="action-button danger" (click)="deleteMatch()">
             <i class="fas fa-trash"></i>
             Delete Match

@@ -1,0 +1,191 @@
+<app-admin-layout [username]="'Admin'" userRole="Admin">
+  <div class="match-sound-detail-container">
+    <div class="page-header">
+      <h1 class="page-title">Match Sound Manager</h1>
+      <div class="header-actions">
+        <a [routerLink]="['/admin/matches', matchId]" class="action-button secondary">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Match</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="notification success" *ngIf="successMessage">
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="successMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="notification error" *ngIf="errorMessage">
+      <div class="notification-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="errorMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="match-info-card" *ngIf="match && !isLoading">
+      <div class="match-header">
+        <div class="match-teams">
+          <div class="team home-team">
+            <img [src]="match.teamLogo" alt="{{ match.teamName }}" class="team-logo">
+            <span class="team-name">{{ match.teamName }}</span>
+          </div>
+          
+          <div class="match-score">
+            <span class="score">{{ match.homeScore }}</span>
+            <span class="separator">:</span>
+            <span class="score">{{ match.awayScore }}</span>
+          </div>
+          
+          <div class="team away-team">
+            <img [src]="match.opponentTeamLogo || match.manualOpponentLogo || 'assets/images/default-team-logo.png'" 
+                 alt="{{ match.opponentTeamName || match.manualOpponentName || 'Unknown Opponent' }}" 
+                 class="team-logo">
+            <span class="team-name">{{ match.opponentTeamName || match.manualOpponentName || 'Unknown Opponent' }}</span>
+          </div>
+        </div>
+        
+        <div class="match-date">
+          <i class="fas fa-calendar-alt"></i>
+          <span>{{ formatDate(match.matchDate) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sound-manager-grid">
+      <div class="sound-selection-card">
+        <div class="card-header">
+          <h2 class="card-title">Available Sounds</h2>
+        </div>
+        <div class="card-content">
+          <div class="sound-list" *ngIf="!isLoading && availableSounds.length > 0">
+            <div class="sound-item" *ngFor="let sound of availableSounds" 
+                 [ngClass]="{'selected': selectedSound?.id === sound.id}"
+                 (click)="selectSound(sound)">
+              <div class="sound-info">
+                <div class="sound-title">{{ sound.title }}</div>
+                <div class="sound-status" [ngClass]="sound.status.toLowerCase()">{{ sound.status }}</div>
+              </div>
+              <div class="sound-actions">
+                <button class="sound-action-button select" (click)="selectSound(sound)">
+                  <i class="fas fa-hand-pointer"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="empty-state" *ngIf="!isLoading && availableSounds.length === 0">
+            <div class="empty-state-icon">
+              <i class="fas fa-music"></i>
+            </div>
+            <p class="empty-state-message">No sounds available for this match.</p>
+            <a [routerLink]="['/admin/sounds/create']" class="action-button">
+              <i class="fas fa-plus"></i>
+              Add Sound
+            </a>
+          </div>
+          
+          <div class="loading-state" *ngIf="isLoading">
+            <div class="spinner">
+              <div class="spinner-inner"></div>
+            </div>
+            <p class="loading-text">Loading sounds...</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sound-player-card">
+        <div class="card-header">
+          <h2 class="card-title">Sound Player</h2>
+        </div>
+        <div class="card-content">
+          <div class="sound-player" *ngIf="selectedSound">
+            <div class="selected-sound-info">
+              <h3 class="selected-sound-title">{{ selectedSound.title }}</h3>
+              <div class="selected-sound-status" [ngClass]="selectedSound.status.toLowerCase()">{{ selectedSound.status }}</div>
+            </div>
+            
+            <div class="player-controls">
+              <div class="time-display">{{ formatTime(currentPosition) }}</div>
+              
+              <div class="control-buttons">
+                <button class="control-button start" *ngIf="!isPlaying && !isPaused" (click)="startSound()" [disabled]="!selectedSound">
+                  <i class="fas fa-play"></i>
+                </button>
+                <button class="control-button pause" *ngIf="isPlaying" (click)="pauseSound()">
+                  <i class="fas fa-pause"></i>
+                </button>
+                <button class="control-button resume" *ngIf="!isPlaying && isPaused" (click)="resumeSound()">
+                  <i class="fas fa-play"></i>
+                </button>
+                <button class="control-button stop" (click)="stopSound()" [disabled]="!isPlaying && !isPaused">
+                  <i class="fas fa-stop"></i>
+                </button>
+              </div>
+              
+              <div class="seek-control">
+                <input 
+                  type="range" 
+                  min="0" 
+                  [max]="audioPlayer && audioPlayer.duration ? audioPlayer.duration * 1000 : 100000" 
+                  [(ngModel)]="currentPosition"
+                  (change)="onSeekChange($event)"
+                  [disabled]="!selectedSound"
+                  class="seek-slider"
+                >
+              </div>
+            </div>
+            
+            <div class="broadcast-info">
+              <p>
+                <i class="fas fa-broadcast-tower"></i>
+                <span *ngIf="latestSoundDetail">Current Status: <span [ngClass]="getSoundStatusClass(latestSoundDetail.soundStatus)">{{ latestSoundDetail.soundStatus }}</span></span>
+                <span *ngIf="!latestSoundDetail">No active sound</span>
+              </p>
+            </div>
+          </div>
+          
+          <div class="empty-state" *ngIf="!selectedSound">
+            <div class="empty-state-icon">
+              <i class="fas fa-music"></i>
+            </div>
+            <p class="empty-state-message">Select a sound from the list to play.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sound-details-card">
+        <div class="card-header">
+          <h2 class="card-title">Sound Details History</h2>
+        </div>
+        <div class="card-content">
+          <div class="sound-details-list" *ngIf="soundDetails.length > 0">
+            <div class="sound-detail-item" *ngFor="let detail of soundDetails">
+              <div class="detail-time">{{ formatDate(detail.createdAt) }}</div>
+              <div class="detail-info">
+                <div class="detail-event-type" [ngClass]="getEventTypeClass(detail.eventType)">{{ detail.eventType }}</div>
+                <div class="detail-sound-title">{{ detail.activeSoundTitle }}</div>
+              </div>
+              <div class="detail-status" [ngClass]="getSoundStatusClass(detail.soundStatus)">{{ detail.soundStatus }}</div>
+              <div class="detail-position">{{ formatTime(detail.currentMillisecond) }}</div>
+            </div>
+          </div>
+          
+          <div class="empty-state" *ngIf="soundDetails.length === 0">
+            <div class="empty-state-icon">
+              <i class="fas fa-history"></i>
+            </div>
+            <p class="empty-state-message">No sound details for this match.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-admin-layout>

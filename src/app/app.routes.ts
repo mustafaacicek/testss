@@ -66,6 +66,12 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { role: 'Admin' }
   },
+  {
+    path: 'admin/matches/sound/:id',
+    loadComponent: () => import('./admin/match/match-sound-detail/match-sound-detail.component').then(m => m.MatchSoundDetailComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
   { 
     path: 'superadmin', 
     loadComponent: () => import('./superadmin/dashboard/superadmin-dashboard.component').then(m => m.SuperAdminDashboardComponent),
