@@ -117,6 +117,9 @@
                   <a [routerLink]="['/admin/sounds/edit', sound.id]" class="action-icon edit" title="Edit">
                     <i class="fas fa-edit"></i>
                   </a>
+                  <a [routerLink]="['/admin/lyrics/edit', sound.id]" class="action-icon lyrics" title="Edit Lyrics">
+                    <i class="fas fa-microphone-alt"></i>
+                  </a>
                   <button class="action-icon delete" (click)="deleteSound(sound.id)" title="Delete">
                     <i class="fas fa-trash"></i>
                   </button>

@@ -1,0 +1,203 @@
+<app-admin-layout [username]="'Admin'" userRole="Admin">
+  <div class="lyrics-editor-container">
+    <div class="page-header">
+      <h1 class="page-title">Lyrics Editor</h1>
+      <div class="header-actions">
+        <button class="action-button secondary" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          <span>Back to Sounds</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Sound Info -->
+    <div class="sound-info-card" *ngIf="sound">
+      <div class="sound-title">
+        <h2>{{ sound.title }}</h2>
+        <span class="team-badge">{{ sound.teamName }}</span>
+      </div>
+      
+      <!-- Audio Player -->
+      <div class="audio-player">
+        <div class="player-controls">
+          <button class="control-button play" *ngIf="!isPlaying" (click)="playAudio()" [disabled]="!sound.soundUrl1">
+            <i class="fas fa-play"></i>
+          </button>
+          <button class="control-button pause" *ngIf="isPlaying" (click)="pauseAudio()">
+            <i class="fas fa-pause"></i>
+          </button>
+          <button class="control-button stop" (click)="stopAudio()" [disabled]="!isPlaying && !isPaused">
+            <i class="fas fa-stop"></i>
+          </button>
+        </div>
+        
+        <div class="player-timeline">
+          <span class="time-display">{{ formatTime(currentTime) }}</span>
+          <input 
+            type="range" 
+            class="timeline-slider" 
+            [min]="0" 
+            [max]="duration" 
+            [value]="currentTime" 
+            (input)="seekAudio($event)"
+            [disabled]="!sound.soundUrl1"
+          >
+          <span class="time-display">{{ formatTime(duration) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="notification success" *ngIf="successMessage">
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="successMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="notification error" *ngIf="errorMessage">
+      <div class="notification-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="errorMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Lyrics Form -->
+    <div class="lyrics-form-card" id="lyricsForm">
+      <h3 class="card-title">{{ isEditMode ? 'Edit Lyrics' : 'Add Lyrics' }}</h3>
+      <form [formGroup]="lyricsForm" (ngSubmit)="addLyrics()">
+        <div class="form-group">
+          <label for="lyric">Lyrics Text</label>
+          <textarea 
+            id="lyric" 
+            formControlName="lyric" 
+            class="form-control" 
+            rows="3" 
+            placeholder="Enter lyrics text here..."
+          ></textarea>
+          <div class="form-error" *ngIf="lyricsForm.get('lyric')?.invalid && lyricsForm.get('lyric')?.touched">
+            Lyrics text is required
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="second">Time (seconds)</label>
+          <div class="time-input-group">
+            <input 
+              type="number" 
+              id="second" 
+              formControlName="second" 
+              class="form-control" 
+              min="0"
+              [max]="duration"
+            >
+            <button 
+              type="button" 
+              class="capture-time-button" 
+              (click)="captureCurrentTime()" 
+              [disabled]="!sound?.soundUrl1"
+            >
+              <i class="fas fa-stopwatch"></i>
+              Capture Current Time
+            </button>
+          </div>
+          <div class="form-error" *ngIf="lyricsForm.get('second')?.invalid && lyricsForm.get('second')?.touched">
+            Time must be a positive number
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <!-- Show Update button in edit mode -->
+          <button 
+            *ngIf="isEditMode"
+            type="submit" 
+            class="action-button primary" 
+            [disabled]="lyricsForm.invalid || !soundId"
+          >
+            <i class="fas fa-save"></i>
+            Update Lyrics
+          </button>
+          
+          <!-- Show Add button in add mode -->
+          <button 
+            *ngIf="!isEditMode"
+            type="submit" 
+            class="action-button primary" 
+            [disabled]="lyricsForm.invalid || !soundId"
+          >
+            <i class="fas fa-plus"></i>
+            Add Lyrics
+          </button>
+          
+          <!-- Cancel button in edit mode -->
+          <button 
+            *ngIf="isEditMode"
+            type="button" 
+            class="action-button secondary" 
+            (click)="cancelEdit()"
+          >
+            <i class="fas fa-times"></i>
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Lyrics List -->
+    <div class="lyrics-list-card" *ngIf="lyrics.length > 0">
+      <div class="card-header">
+        <h3 class="card-title">Lyrics Timeline</h3>
+        <button class="action-button danger" (click)="deleteAllLyrics()">
+          <i class="fas fa-trash"></i>
+          Delete All
+        </button>
+      </div>
+      
+      <div class="lyrics-timeline">
+        <div class="lyrics-item" *ngFor="let item of lyrics">
+          <div class="lyrics-time">
+            <span class="time-badge">{{ formatTime(item.second) }}</span>
+          </div>
+          <div class="lyrics-content">
+            <p>{{ item.lyric }}</p>
+          </div>
+          <div class="lyrics-actions">
+            <button class="action-icon edit" (click)="editLyrics(item)" title="Edit">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-icon delete" (click)="deleteLyrics(item.id!)" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state-container" *ngIf="!isLoading && lyrics.length === 0">
+      <div class="empty-state">
+        <div class="empty-state-icon">
+          <i class="fas fa-microphone-alt"></i>
+        </div>
+        <h3 class="empty-state-title">No Lyrics Yet</h3>
+        <p class="empty-state-message">
+          This sound doesn't have any lyrics yet. Use the form above to add lyrics at specific timestamps.
+        </p>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <p class="loading-text">Loading...</p>
+    </div>
+  </div>
+</app-admin-layout>

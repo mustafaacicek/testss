@@ -36,6 +36,12 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { role: 'Admin' }
   },
+  {
+    path: 'admin/lyrics/edit/:id',
+    loadComponent: () => import('./admin/lyrics/lyrics-editor/lyrics-editor.component').then(m => m.LyricsEditorComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
   { 
     path: 'superadmin', 
     loadComponent: () => import('./superadmin/dashboard/superadmin-dashboard.component').then(m => m.SuperAdminDashboardComponent),
