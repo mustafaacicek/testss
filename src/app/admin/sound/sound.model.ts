@@ -9,8 +9,8 @@ export enum SoundStatus {
 export interface Sound {
   id?: number;
   title: string;
-  soundUrl1?: string;
-  soundUrl2?: string;
+  soundUrl?: string;
+  soundImageUrl?: string;
   teamId?: number;
   teamName?: string;
   status?: SoundStatus;
@@ -21,8 +21,8 @@ export interface Sound {
 export interface SoundResponse {
   id: number;
   title: string;
-  soundUrl1: string;
-  soundUrl2: string | null;
+  soundUrl: string;
+  soundImageUrl: string | null;
   teamId: number;
   teamName: string;
   status: SoundStatus;
@@ -32,8 +32,8 @@ export interface SoundResponse {
 
 export interface SoundRequest {
   title: string;
-  soundUrl1?: string;
-  soundUrl2?: string;
+  soundUrl?: string;
+  soundImageUrl?: string;
   status?: SoundStatus;
   currentMillisecond?: number;
 }

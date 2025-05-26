@@ -20,7 +20,7 @@
       <!-- Audio Player -->
       <div class="audio-player">
         <div class="player-controls">
-          <button class="control-button play" *ngIf="!isPlaying" (click)="playAudio()" [disabled]="!sound.soundUrl1">
+          <button class="control-button play" *ngIf="!isPlaying" (click)="playAudio()" [disabled]="!sound.soundUrl">
             <i class="fas fa-play"></i>
           </button>
           <button class="control-button pause" *ngIf="isPlaying" (click)="pauseAudio()">
@@ -40,7 +40,7 @@
             [max]="duration" 
             [value]="currentTime" 
             (input)="seekAudio($event)"
-            [disabled]="!sound.soundUrl1"
+            [disabled]="!sound.soundUrl"
           >
           <span class="time-display">{{ formatTime(duration) }}</span>
         </div>
@@ -101,7 +101,7 @@
               type="button" 
               class="capture-time-button" 
               (click)="captureCurrentTime()" 
-              [disabled]="!sound?.soundUrl1"
+              [disabled]="!sound?.soundUrl"
             >
               <i class="fas fa-stopwatch"></i>
               Capture Current Time

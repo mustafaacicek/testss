@@ -56,31 +56,34 @@ export class SoundService {
   }
 
   /**
-   * Upload a sound file
+   * Upload a new sound file
    */
-  uploadSoundFile(title: string, file: File): Observable<SoundResponse> {
+  uploadNewSoundFile(title: string, file: File, imageFile?: File): Observable<SoundResponse> {
     const formData = new FormData();
     formData.append('title', title);
     formData.append('file', file);
+    if (imageFile) {
+      formData.append('imageFile', imageFile);
+    }
     return this.http.post<SoundResponse>(`${this.apiUrl}/upload`, formData);
   }
 
   /**
-   * Upload a primary sound file for an existing sound (update with file)
+   * Upload a sound file for an existing sound (update with file)
    */
-  uploadPrimarySoundFile(id: number, file: File): Observable<SoundResponse> {
+  uploadSoundFile(id: number, file: File): Observable<SoundResponse> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<SoundResponse>(`${this.apiUrl}/${id}/upload-primary`, formData);
+    return this.http.post<SoundResponse>(`${this.apiUrl}/${id}/upload`, formData);
   }
 
   /**
-   * Upload a secondary sound file
+   * Upload a sound image file
    */
-  uploadSecondarySoundFile(id: number, file: File): Observable<SoundResponse> {
+  uploadSoundImageFile(id: number, file: File): Observable<SoundResponse> {
     const formData = new FormData();
     formData.append('file', file);
-    return this.http.post<SoundResponse>(`${this.apiUrl}/${id}/upload-secondary`, formData);
+    return this.http.post<SoundResponse>(`${this.apiUrl}/${id}/upload-image`, formData);
   }
 
   /**

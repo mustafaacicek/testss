@@ -511,6 +511,19 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 .player-info {
   margin-top: 2rem;
   
+  .sound-image {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    
+    .sound-thumbnail {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: $border-radius-sm;
+      box-shadow: $shadow-md;
+      object-fit: contain;
+    }
+  }
+  
   .info-message {
     padding: 1rem;
     background-color: rgba($info, 0.1);

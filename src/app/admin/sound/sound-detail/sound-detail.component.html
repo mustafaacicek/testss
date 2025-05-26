@@ -73,29 +73,29 @@
               <div class="info-value">{{ formatTime(sound.currentMillisecond) }}</div>
             </div>
             
-            <div class="info-row" *ngIf="sound.soundUrl1">
-              <div class="info-label">Primary Sound</div>
+            <div class="info-row" *ngIf="sound.soundUrl">
+              <div class="info-label">Sound File</div>
               <div class="info-value">
-                <a [href]="sound.soundUrl1" target="_blank" class="file-link">
+                <a [href]="sound.soundUrl" target="_blank" class="file-link">
                   <i class="fas fa-external-link-alt"></i>
                   <span>Open in new tab</span>
                 </a>
               </div>
             </div>
             
-            <div class="info-row" *ngIf="sound.soundUrl2">
-              <div class="info-label">Secondary Sound</div>
+            <div class="info-row" *ngIf="sound.soundImageUrl">
+              <div class="info-label">Sound Image</div>
               <div class="info-value">
-                <a [href]="sound.soundUrl2" target="_blank" class="file-link">
+                <a [href]="sound.soundImageUrl" target="_blank" class="file-link">
                   <i class="fas fa-external-link-alt"></i>
-                  <span>Open in new tab</span>
+                  <span>View image</span>
                 </a>
               </div>
             </div>
           </div>
         </div>
         
-        <div class="player-card" *ngIf="sound.soundUrl1">
+        <div class="player-card" *ngIf="sound.soundUrl">
           <div class="card-header">
             <h2 class="card-title">Sound Player</h2>
           </div>
@@ -107,7 +107,7 @@
                     class="play-button" 
                     *ngIf="!isPlaying"
                     (click)="playAudio()"
-                    [disabled]="!sound.soundUrl1"
+                    [disabled]="!sound.soundUrl"
                   >
                     <i class="fas fa-play"></i>
                   </button>
@@ -160,17 +160,19 @@
               </div>
               
               <div class="player-info">
+                <div class="sound-image" *ngIf="sound.soundImageUrl">
+                  <img [src]="sound.soundImageUrl" alt="Sound Image" class="sound-thumbnail">
+                </div>
                 <div class="info-message">
                   <i class="fas fa-info-circle"></i>
-                  <span *ngIf="sound.soundUrl2">This sound has both primary and secondary audio files that will play simultaneously.</span>
-                  <span *ngIf="!sound.soundUrl2">This sound has only a primary audio file.</span>
+                  <span>Sound file will play when you press the play button.</span>
                 </div>
               </div>
             </div>
           </div>
         </div>
         
-        <div class="player-card empty-player" *ngIf="!sound.soundUrl1">
+        <div class="player-card empty-player" *ngIf="!sound.soundUrl">
           <div class="card-header">
             <h2 class="card-title">Sound Player</h2>
           </div>

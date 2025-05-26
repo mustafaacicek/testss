@@ -84,7 +84,7 @@
             <td>{{ sound.updatedAt | date:'medium' }}</td>
             <td>
               <div class="action-buttons">
-                <div class="playback-controls" *ngIf="sound.soundUrl1">
+                <div class="playback-controls" *ngIf="sound.soundUrl">
                   <button 
                     class="action-icon play" 
                     *ngIf="sound.status !== SoundStatus.STARTED"

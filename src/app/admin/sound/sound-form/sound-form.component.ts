@@ -21,12 +21,12 @@ export class SoundFormComponent implements OnInit {
   isSaving = false;
   errorMessage = '';
   successMessage = '';
-  soundFile1: File | null = null;
-  soundFile2: File | null = null;
-  uploadProgress1 = 0;
-  uploadProgress2 = 0;
-  isUploading1 = false;
-  isUploading2 = false;
+  soundFile: File | null = null;
+  imageFile: File | null = null;
+  uploadProgressSound = 0;
+  uploadProgressImage = 0;
+  isUploadingSound = false;
+  isUploadingImage = false;
   
   constructor(
     private fb: FormBuilder,
@@ -50,8 +50,8 @@ export class SoundFormComponent implements OnInit {
   createForm(): FormGroup {
     return this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
-      soundUrl1: [''],
-      soundUrl2: [''],
+      soundUrl: [''],
+      soundImageUrl: [''],
       status: [SoundStatus.STOPPED],
       currentMillisecond: [0]
     });
@@ -63,8 +63,8 @@ export class SoundFormComponent implements OnInit {
       next: (sound) => {
         this.soundForm.patchValue({
           title: sound.title,
-          soundUrl1: sound.soundUrl1,
-          soundUrl2: sound.soundUrl2,
+          soundUrl: sound.soundUrl,
+          soundImageUrl: sound.soundImageUrl,
           status: sound.status,
           currentMillisecond: sound.currentMillisecond
         });
@@ -86,13 +86,13 @@ export class SoundFormComponent implements OnInit {
     this.isSaving = true;
     
     if (this.isEditMode && this.soundId) {
-      // If we have a new primary sound file during edit mode, upload it first
-      if (this.soundFile1) {
+      // If we have a new sound file during edit mode, upload it first
+      if (this.soundFile) {
         this.uploadAndUpdateSound();
       } else {
         this.updateSound();
       }
-    } else if (this.soundFile1) {
+    } else if (this.soundFile) {
       this.uploadAndCreateSound();
     } else {
       this.createSound();
@@ -102,8 +102,8 @@ export class SoundFormComponent implements OnInit {
   createSound(): void {
     const soundData: SoundRequest = {
       title: this.soundForm.get('title')?.value,
-      soundUrl1: this.soundForm.get('soundUrl1')?.value,
-      soundUrl2: this.soundForm.get('soundUrl2')?.value,
+      soundUrl: this.soundForm.get('soundUrl')?.value,
+      soundImageUrl: this.soundForm.get('soundImageUrl')?.value,
       status: this.soundForm.get('status')?.value,
       currentMillisecond: this.soundForm.get('currentMillisecond')?.value
     };
@@ -124,11 +124,14 @@ export class SoundFormComponent implements OnInit {
   }
 
   uploadAndCreateSound(): void {
-    if (!this.soundFile1) return;
+    if (!this.soundFile) return;
     
     const title = this.soundForm.get('title')?.value;
     
-    this.soundService.uploadSoundFile(title, this.soundFile1).subscribe({
+    // Convert null to undefined for the imageFile parameter
+    const imageFileParam = this.imageFile || undefined;
+    
+    this.soundService.uploadNewSoundFile(title, this.soundFile, imageFileParam).subscribe({
       next: (sound) => {
         this.successMessage = 'Sound uploaded and created successfully';
         this.isSaving = false;
@@ -144,41 +147,35 @@ export class SoundFormComponent implements OnInit {
   }
 
   uploadAndUpdateSound(): void {
-    if (!this.soundId || !this.soundFile1) return;
+    if (!this.soundId || !this.soundFile) return;
     
-    // First upload the primary sound file
-    const title = this.soundForm.get('title')?.value;
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('file', this.soundFile1);
-    
-    this.isUploading1 = true;
-    this.uploadProgress1 = 0;
+    this.isUploadingSound = true;
+    this.uploadProgressSound = 0;
     
     // Simulate upload progress
     const interval = setInterval(() => {
-      this.uploadProgress1 += 5;
-      if (this.uploadProgress1 >= 100) {
+      this.uploadProgressSound += 10;
+      if (this.uploadProgressSound >= 100) {
         clearInterval(interval);
       }
-    }, 100);
+    }, 200);
     
-    // Use a custom endpoint for updating with file upload
-    this.soundService.uploadPrimarySoundFile(this.soundId, this.soundFile1).subscribe({
+    // Upload the sound file
+    this.soundService.uploadSoundFile(this.soundId, this.soundFile).subscribe({
       next: (sound: SoundResponse) => {
         clearInterval(interval);
-        this.uploadProgress1 = 100;
-        this.isUploading1 = false;
+        this.uploadProgressSound = 100;
+        this.isUploadingSound = false;
         
         // Update the form with the new URL
-        this.soundForm.patchValue({ soundUrl1: sound.soundUrl1 });
+        this.soundForm.patchValue({ soundUrl: sound.soundUrl });
         
         // Now update the rest of the sound data
         this.updateSound();
       },
-      error: (error: any) => {
+      error: (error) => {
         clearInterval(interval);
-        this.isUploading1 = false;
+        this.isUploadingSound = false;
         this.errorMessage = error.message || 'Failed to upload sound file';
         this.isSaving = false;
       }
@@ -190,8 +187,8 @@ export class SoundFormComponent implements OnInit {
     
     const soundData: SoundRequest = {
       title: this.soundForm.get('title')?.value,
-      soundUrl1: this.soundForm.get('soundUrl1')?.value,
-      soundUrl2: this.soundForm.get('soundUrl2')?.value,
+      soundUrl: this.soundForm.get('soundUrl')?.value,
+      soundImageUrl: this.soundForm.get('soundImageUrl')?.value,
       status: this.soundForm.get('status')?.value,
       currentMillisecond: this.soundForm.get('currentMillisecond')?.value
     };
@@ -212,32 +209,38 @@ export class SoundFormComponent implements OnInit {
   }
 
   onFileSelected(event: Event, fileNumber: number): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      
-      // Check if file is an audio file
-      if (!file.type.startsWith('audio/')) {
-        this.errorMessage = 'Please select an audio file';
-        return;
-      }
+    const element = event.target as HTMLInputElement;
+    if (element.files && element.files.length > 0) {
+      const file = element.files[0];
       
       if (fileNumber === 1) {
-        this.soundFile1 = file;
+        // Check if it's an audio file
+        if (!file.type.startsWith('audio/')) {
+          this.errorMessage = 'Please select an audio file (MP3, WAV, etc.)';
+          return;
+        }
+        
+        this.soundFile = file;
         // Store the file name for display
         const fileName = file.name;
-        console.log('Selected primary sound file:', fileName);
+        console.log('Selected sound file:', fileName);
         
         // Don't immediately upload in edit mode, wait for form submission
         this.simulateUploadProgress(1);
       } else {
-        this.soundFile2 = file;
+        // Check if it's an image file
+        if (!file.type.startsWith('image/')) {
+          this.errorMessage = 'Please select an image file (JPG, PNG, etc.)';
+          return;
+        }
+        
+        this.imageFile = file;
         // Store the file name for display
         const fileName = file.name;
-        console.log('Selected secondary sound file:', fileName);
+        console.log('Selected image file:', fileName);
         
         if (this.isEditMode && this.soundId) {
-          this.uploadSecondarySoundFile();
+          this.uploadSoundImageFile();
         } else {
           this.simulateUploadProgress(2);
         }
@@ -245,33 +248,33 @@ export class SoundFormComponent implements OnInit {
     }
   }
 
-  uploadSecondarySoundFile(): void {
-    if (!this.soundId || !this.soundFile2) return;
+  uploadSoundImageFile(): void {
+    if (!this.soundId || !this.imageFile) return;
     
-    this.isUploading2 = true;
-    this.uploadProgress2 = 0;
+    this.isUploadingImage = true;
+    this.uploadProgressImage = 0;
     
     // Simulate upload progress
     const interval = setInterval(() => {
-      this.uploadProgress2 += 10;
-      if (this.uploadProgress2 >= 100) {
+      this.uploadProgressImage += 10;
+      if (this.uploadProgressImage >= 100) {
         clearInterval(interval);
       }
     }, 200);
     
-    this.soundService.uploadSecondarySoundFile(this.soundId, this.soundFile2).subscribe({
+    this.soundService.uploadSoundImageFile(this.soundId, this.imageFile).subscribe({
       next: (sound) => {
-        this.soundForm.patchValue({ soundUrl2: sound.soundUrl2 });
-        this.isUploading2 = false;
-        this.uploadProgress2 = 100;
-        this.successMessage = 'Secondary sound file uploaded successfully';
+        this.soundForm.patchValue({ soundImageUrl: sound.soundImageUrl });
+        this.isUploadingImage = false;
+        this.uploadProgressImage = 100;
+        this.successMessage = 'Sound image file uploaded successfully';
         setTimeout(() => {
           this.successMessage = '';
         }, 3000);
       },
       error: (error) => {
-        this.errorMessage = error.message || 'Failed to upload secondary sound file';
-        this.isUploading2 = false;
+        this.errorMessage = error.message || 'Failed to upload sound image file';
+        this.isUploadingImage = false;
         clearInterval(interval);
       }
     });
@@ -279,47 +282,47 @@ export class SoundFormComponent implements OnInit {
 
   simulateUploadProgress(fileNumber: number): void {
     if (fileNumber === 1) {
-      this.isUploading1 = true;
-      this.uploadProgress1 = 0;
+      this.isUploadingSound = true;
+      this.uploadProgressSound = 0;
       
       // Create a temporary object URL for the file to display it in the UI
-      if (this.soundFile1) {
-        const tempUrl = URL.createObjectURL(this.soundFile1);
-        console.log('Created temporary URL for primary sound file:', tempUrl);
-        this.soundForm.patchValue({ soundUrl1: tempUrl });
+      if (this.soundFile) {
+        const tempUrl = URL.createObjectURL(this.soundFile);
+        console.log('Created temporary URL for sound file:', tempUrl);
+        this.soundForm.patchValue({ soundUrl: tempUrl });
       }
       
       const interval = setInterval(() => {
-        this.uploadProgress1 += 10;
-        if (this.uploadProgress1 >= 100) {
+        this.uploadProgressSound += 10;
+        if (this.uploadProgressSound >= 100) {
           clearInterval(interval);
-          this.isUploading1 = false;
+          this.isUploadingSound = false;
           
           // Ensure the file is still displayed after upload simulation completes
-          if (this.soundFile1) {
+          if (this.soundFile) {
             console.log('Upload simulation complete, file should remain visible');
           }
         }
       }, 200);
     } else {
-      this.isUploading2 = true;
-      this.uploadProgress2 = 0;
+      this.isUploadingImage = true;
+      this.uploadProgressImage = 0;
       
       // Create a temporary object URL for the file to display it in the UI
-      if (this.soundFile2) {
-        const tempUrl = URL.createObjectURL(this.soundFile2);
-        console.log('Created temporary URL for secondary sound file:', tempUrl);
-        this.soundForm.patchValue({ soundUrl2: tempUrl });
+      if (this.imageFile) {
+        const tempUrl = URL.createObjectURL(this.imageFile);
+        console.log('Created temporary URL for image file:', tempUrl);
+        this.soundForm.patchValue({ soundImageUrl: tempUrl });
       }
       
       const interval = setInterval(() => {
-        this.uploadProgress2 += 10;
-        if (this.uploadProgress2 >= 100) {
+        this.uploadProgressImage += 10;
+        if (this.uploadProgressImage >= 100) {
           clearInterval(interval);
-          this.isUploading2 = false;
+          this.isUploadingImage = false;
           
           // Ensure the file is still displayed after upload simulation completes
-          if (this.soundFile2) {
+          if (this.imageFile) {
             console.log('Upload simulation complete, file should remain visible');
           }
         }
@@ -329,11 +332,11 @@ export class SoundFormComponent implements OnInit {
 
   removeFile(fileNumber: number): void {
     if (fileNumber === 1) {
-      this.soundForm.patchValue({ soundUrl1: '' });
-      this.soundFile1 = null;
+      this.soundForm.patchValue({ soundUrl: '' });
+      this.soundFile = null;
     } else {
-      this.soundForm.patchValue({ soundUrl2: '' });
-      this.soundFile2 = null;
+      this.soundForm.patchValue({ soundImageUrl: '' });
+      this.imageFile = null;
     }
   }
 

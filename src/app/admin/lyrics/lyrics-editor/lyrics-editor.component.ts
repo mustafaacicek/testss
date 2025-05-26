@@ -75,8 +75,8 @@ export class LyricsEditorComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         
         // Initialize audio element
-        if (sound.soundUrl1) {
-          this.initAudio(sound.soundUrl1);
+        if (sound.soundUrl) {
+          this.initAudio(sound.soundUrl);
         }
       },
       error: (error) => {

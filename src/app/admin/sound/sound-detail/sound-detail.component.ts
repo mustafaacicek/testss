@@ -19,8 +19,8 @@ export class SoundDetailComponent implements OnInit, OnDestroy {
   errorMessage = '';
   successMessage = '';
   soundId: number | null = null;
-  audio1: HTMLAudioElement | null = null;
-  audio2: HTMLAudioElement | null = null;
+  audio: HTMLAudioElement | null = null;
+  soundImage: string | null = null;
   isPlaying = false;
   isPaused = false;
   currentTime = 0;
@@ -70,23 +70,23 @@ export class SoundDetailComponent implements OnInit, OnDestroy {
   setupAudio(): void {
     if (!this.sound) return;
     
-    if (this.sound.soundUrl1) {
-      this.audio1 = new Audio(this.sound.soundUrl1);
-      this.audio1.addEventListener('timeupdate', () => this.onTimeUpdate());
-      this.audio1.addEventListener('loadedmetadata', () => {
-        if (this.audio1) {
-          this.duration = this.audio1.duration * 1000; // Convert to milliseconds
+    if (this.sound.soundUrl) {
+      this.audio = new Audio(this.sound.soundUrl);
+      this.audio.addEventListener('timeupdate', () => this.onTimeUpdate());
+      this.audio.addEventListener('loadedmetadata', () => {
+        if (this.audio) {
+          this.duration = this.audio.duration * 1000; // Convert to milliseconds
         }
       });
       
       // Set the current position if available
       if (this.sound.currentMillisecond) {
-        this.audio1.currentTime = this.sound.currentMillisecond / 1000; // Convert to seconds
+        this.audio.currentTime = this.sound.currentMillisecond / 1000; // Convert to seconds
       }
     }
     
-    if (this.sound.soundUrl2) {
-      this.audio2 = new Audio(this.sound.soundUrl2);
+    if (this.sound.soundImageUrl) {
+      this.soundImage = this.sound.soundImageUrl;
     }
     
     // If the sound status is STARTED, start playing
@@ -96,9 +96,9 @@ export class SoundDetailComponent implements OnInit, OnDestroy {
   }
 
   playAudio(): void {
-    if (!this.audio1) return;
+    if (!this.audio) return;
     
-    this.audio1.play().then(() => {
+    this.audio.play().then(() => {
       this.isPlaying = true;
       this.isPaused = false;
       
@@ -119,19 +119,12 @@ export class SoundDetailComponent implements OnInit, OnDestroy {
     }).catch(error => {
       this.errorMessage = 'Failed to play audio: ' + error.message;
     });
-    
-    // Play the second audio if available
-    if (this.audio2) {
-      this.audio2.play().catch(() => {
-        // Ignore errors for the second audio
-      });
-    }
   }
 
   pauseAudio(): void {
-    if (!this.audio1) return;
+    if (!this.audio) return;
     
-    this.audio1.pause();
+    this.audio.pause();
     this.isPlaying = false;
     this.isPaused = true;
     
@@ -139,11 +132,6 @@ export class SoundDetailComponent implements OnInit, OnDestroy {
     if (this.updateInterval) {
       this.updateInterval.unsubscribe();
       this.updateInterval = null;
-    }
-    
-    // Pause the second audio if available
-    if (this.audio2) {
-      this.audio2.pause();
     }
     
     // Update the sound status in the database
@@ -160,10 +148,10 @@ export class SoundDetailComponent implements OnInit, OnDestroy {
   }
 
   stopAudio(): void {
-    if (!this.audio1) return;
+    if (!this.audio) return;
     
-    this.audio1.pause();
-    this.audio1.currentTime = 0;
+    this.audio.pause();
+    this.audio.currentTime = 0;
     this.isPlaying = false;
     this.isPaused = false;
     this.currentTime = 0;
@@ -172,12 +160,6 @@ export class SoundDetailComponent implements OnInit, OnDestroy {
     if (this.updateInterval) {
       this.updateInterval.unsubscribe();
       this.updateInterval = null;
-    }
-    
-    // Stop the second audio if available
-    if (this.audio2) {
-      this.audio2.pause();
-      this.audio2.currentTime = 0;
     }
     
     // Update the sound status in the database
@@ -194,12 +176,12 @@ export class SoundDetailComponent implements OnInit, OnDestroy {
   }
 
   onTimeUpdate(): void {
-    if (!this.audio1) return;
+    if (!this.audio) return;
     
-    this.currentTime = this.audio1.currentTime * 1000; // Convert to milliseconds
+    this.currentTime = this.audio.currentTime * 1000; // Convert to milliseconds
     
     // Check if the audio has ended
-    if (this.audio1.ended) {
+    if (this.audio.ended) {
       this.isPlaying = false;
       this.isPaused = false;
       
@@ -224,18 +206,13 @@ export class SoundDetailComponent implements OnInit, OnDestroy {
   }
 
   onSeek(event: Event): void {
-    if (!this.audio1 || !this.duration) return;
+    if (!this.audio || !this.duration) return;
     
     const input = event.target as HTMLInputElement;
     const seekTime = parseInt(input.value, 10);
     
-    this.audio1.currentTime = seekTime / 1000; // Convert to seconds
+    this.audio.currentTime = seekTime / 1000; // Convert to seconds
     this.currentTime = seekTime;
-    
-    // Update the second audio if available
-    if (this.audio2) {
-      this.audio2.currentTime = seekTime / 1000;
-    }
     
     // Update the sound position in the database
     if (this.soundId) {
@@ -251,18 +228,13 @@ export class SoundDetailComponent implements OnInit, OnDestroy {
   }
 
   onVolumeChange(event: Event): void {
-    if (!this.audio1) return;
+    if (!this.audio) return;
     
     const input = event.target as HTMLInputElement;
     const volumeValue = parseFloat(input.value);
     
     this.volume = volumeValue;
-    this.audio1.volume = volumeValue;
-    
-    // Update the second audio if available
-    if (this.audio2) {
-      this.audio2.volume = volumeValue;
-    }
+    this.audio.volume = volumeValue;
   }
 
   startUpdateInterval(): void {
