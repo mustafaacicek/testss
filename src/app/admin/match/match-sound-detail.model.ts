@@ -38,8 +38,8 @@ export interface MatchSoundDetailRequest {
 export interface MatchSoundResponse {
   id: number;
   title: string;
-  soundUrl1: string;
-  soundUrl2: string | null;
+  soundUrl: string;
+  soundImageUrl: string | null;
   team: {
     id: number;
     name: string;

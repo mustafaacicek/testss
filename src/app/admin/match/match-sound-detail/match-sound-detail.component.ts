@@ -149,7 +149,7 @@ export class MatchSoundDetailComponent implements OnInit, OnDestroy {
       
       // Update audio player source
       if (this.audioPlayer) {
-        this.audioPlayer.src = sound.soundUrl1;
+        this.audioPlayer.src = sound.soundUrl;
         this.audioPlayer.load();
       }
     }
@@ -193,8 +193,8 @@ export class MatchSoundDetailComponent implements OnInit, OnDestroy {
     }
     
     // Load the new sound
-    if (this.audioPlayer && sound.soundUrl1) {
-      this.audioPlayer.src = sound.soundUrl1;
+    if (this.audioPlayer && sound.soundUrl) {
+      this.audioPlayer.src = sound.soundUrl;
       this.audioPlayer.load();
     }
   }
