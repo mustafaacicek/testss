@@ -1,0 +1,223 @@
+<app-admin-layout [username]="'Admin'" userRole="Admin">
+  <div class="match-manage-container">
+    <div class="page-header">
+      <div class="header-title">
+        <a [routerLink]="['/admin/matches']" class="back-button">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="page-title">Match Sound Management</h1>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="notification success" *ngIf="successMessage">
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="successMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="notification error" *ngIf="errorMessage">
+      <div class="notification-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="errorMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="isLoading">
+      <div class="spinner">
+        <div class="spinner-inner"></div>
+      </div>
+      <p class="loading-text">Loading match details...</p>
+    </div>
+
+    <!-- Match Details -->
+    <div class="match-details-container" *ngIf="!isLoading && matchDetail">
+      <div class="match-card">
+        <div class="match-header">
+          <span class="match-date">{{ formatDate(matchDetail.matchDate) }}</span>
+          <span class="status-badge" [ngClass]="getStatusClass(matchDetail.status)">{{ matchDetail.status }}</span>
+        </div>
+        
+        <div class="match-teams">
+          <div class="team home-team">
+            <img [src]="matchDetail.teamLogo" alt="{{ matchDetail.teamName }}" class="team-logo">
+            <span class="team-name">{{ matchDetail.teamName }}</span>
+          </div>
+          
+          <div class="match-score">
+            <span class="score">{{ matchDetail.homeScore }}</span>
+            <span class="separator">:</span>
+            <span class="score">{{ matchDetail.awayScore }}</span>
+          </div>
+          
+          <div class="team away-team">
+            <img [src]="matchDetail.opponentTeamLogo || matchDetail.manualOpponentLogo" 
+                alt="{{ matchDetail.opponentTeamName || matchDetail.manualOpponentName }}" 
+                class="team-logo">
+            <span class="team-name">{{ matchDetail.opponentTeamName || matchDetail.manualOpponentName }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Sound Section -->
+      <div class="active-sound-section">
+        <h2 class="section-title">Active Sound</h2>
+        
+        <div class="active-sound-card" *ngIf="matchDetail.activeSound">
+          <div class="sound-info">
+            <div class="sound-image" *ngIf="matchDetail.activeSound.soundImageUrl">
+              <img [src]="matchDetail.activeSound.soundImageUrl" alt="{{ matchDetail.activeSound.title }}">
+            </div>
+            <div class="sound-image no-image" *ngIf="!matchDetail.activeSound.soundImageUrl">
+              <i class="fas fa-music"></i>
+            </div>
+            <div class="sound-details">
+              <h3 class="sound-title">{{ matchDetail.activeSound.title }}</h3>
+              <div class="sound-status">
+                <span class="status-badge" [ngClass]="getStatusClass(matchDetail.soundStatus)">
+                  {{ matchDetail.soundStatus }}
+                </span>
+                <span class="sound-position">{{ formatTime(matchDetail.currentMillisecond) }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="sound-controls">
+            <div class="playback-controls">
+              <button 
+                class="control-button play" 
+                (click)="startSound()"
+                [disabled]="!selectedSound || isPlaying"
+                title="Play"
+              >
+                <i class="fas fa-play"></i>
+              </button>
+              <button 
+                class="control-button pause" 
+                (click)="pauseSound()"
+                [disabled]="!isPlaying"
+                title="Pause"
+              >
+                <i class="fas fa-pause"></i>
+              </button>
+              <button 
+                class="control-button resume" 
+                (click)="resumeSound()"
+                [disabled]="!isPaused"
+                title="Resume"
+              >
+                <i class="fas fa-play-circle"></i>
+              </button>
+              <button 
+                class="control-button stop" 
+                (click)="stopSound()"
+                [disabled]="(!isPlaying && !isPaused) || !selectedSound"
+                title="Stop"
+              >
+                <i class="fas fa-stop"></i>
+              </button>
+            </div>
+            
+            <div class="seek-control">
+              <input 
+                type="range" 
+                min="0" 
+                [max]="audioPlayer && audioPlayer.duration ? audioPlayer.duration * 1000 : 100000" 
+                [value]="currentPosition"
+                (change)="onSeekChange($event)"
+                [disabled]="!isPlaying && !isPaused"
+              >
+              <div class="time-display">
+                <span class="current-time">{{ formatTime(currentPosition) }}</span>
+                <span class="duration" *ngIf="audioPlayer && audioPlayer.duration">{{ formatTime(audioPlayer.duration * 1000) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="no-active-sound" *ngIf="!matchDetail.activeSound">
+          <p>No active sound for this match. Select a sound from the list below to start playing.</p>
+        </div>
+      </div>
+
+      <!-- Available Sounds Section -->
+      <div class="available-sounds-section">
+        <h2 class="section-title">Available Sounds</h2>
+        
+        <div class="sounds-list" *ngIf="availableSounds.length > 0">
+          <div 
+            class="sound-item" 
+            *ngFor="let sound of availableSounds"
+            [class.selected]="selectedSound?.id === sound.id"
+            (click)="selectSound(sound)"
+          >
+            <div class="sound-image" *ngIf="sound.soundImageUrl">
+              <img [src]="sound.soundImageUrl" alt="{{ sound.title }}">
+            </div>
+            <div class="sound-image no-image" *ngIf="!sound.soundImageUrl">
+              <i class="fas fa-music"></i>
+            </div>
+            <div class="sound-details">
+              <h3 class="sound-title">{{ sound.title }}</h3>
+            </div>
+            <div class="sound-actions">
+              <button 
+                class="action-button play" 
+                (click)="selectSound(sound); startSound(); $event.stopPropagation()"
+                [disabled]="isPlaying && selectedSound?.id === sound.id"
+                title="Play"
+              >
+                <i class="fas fa-play"></i>
+              </button>
+              <button 
+                class="action-button pause" 
+                (click)="selectSound(sound); pauseSound(); $event.stopPropagation()"
+                [disabled]="!isPlaying || selectedSound?.id !== sound.id"
+                title="Pause"
+              >
+                <i class="fas fa-pause"></i>
+              </button>
+              <button 
+                class="action-button stop" 
+                (click)="selectSound(sound); stopSound(); $event.stopPropagation()"
+                [disabled]="(!isPlaying && !isPaused) || selectedSound?.id !== sound.id"
+                title="Stop"
+              >
+                <i class="fas fa-stop"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="no-sounds" *ngIf="availableSounds.length === 0">
+          <p>No sounds available for this team. Add sounds in the Sound Management section.</p>
+          <a [routerLink]="['/admin/sounds']" class="action-button">
+            <i class="fas fa-music"></i>
+            <span>Manage Sounds</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div class="error-state" *ngIf="!isLoading && !matchDetail">
+      <div class="error-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h3 class="error-title">Match Not Found</h3>
+      <p class="error-message">The match you're looking for doesn't exist or you don't have access to it.</p>
+      <a [routerLink]="['/admin/matches']" class="action-button">
+        <i class="fas fa-arrow-left"></i>
+        <span>Back to Matches</span>
+      </a>
+    </div>
+  </div>
+</app-admin-layout>

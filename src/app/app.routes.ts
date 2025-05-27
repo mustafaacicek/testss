@@ -72,6 +72,12 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { role: 'Admin' }
   },
+  {
+    path: 'admin/matches/manage/:id',
+    loadComponent: () => import('./admin/match/match-manage/match-manage.component').then(m => m.MatchManageComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
   { 
     path: 'superadmin', 
     loadComponent: () => import('./superadmin/dashboard/superadmin-dashboard.component').then(m => m.SuperAdminDashboardComponent),

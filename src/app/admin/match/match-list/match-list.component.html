@@ -131,6 +131,9 @@
             <a [routerLink]="['/admin/matches/sound', match.id]" class="action-icon sound" title="Sound Management">
               <i class="fas fa-music"></i>
             </a>
+            <a [routerLink]="['/admin/matches/manage', match.id]" class="action-icon manage" title="Manage Match">
+              <i class="fas fa-sliders-h"></i>
+            </a>
             <button class="action-icon delete" (click)="deleteMatch(match.id)" title="Delete">
               <i class="fas fa-trash"></i>
             </button>
