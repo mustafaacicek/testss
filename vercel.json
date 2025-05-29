@@ -3,15 +3,12 @@
   "framework": "angular",
   "buildCommand": "npm run build",
   "outputDirectory": "dist/fanlaappfront/browser",
-  "routes": [
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/favicon.ico", "dest": "/favicon.ico" },
-    { "src": "/index.html", "dest": "/index.html" },
-    { "src": "/manifest.webmanifest", "dest": "/manifest.webmanifest" },
-    { "src": "/(.*).(js|css|png|jpg|jpeg|gif|svg|ico|json|webp)", "dest": "/$1.$2" },
-    { "src": "/(.*)", "dest": "/index.html" }
-  ],
   "rewrites": [
+    { "source": "/assets/(.*)", "destination": "/assets/$1" },
+    { "source": "/favicon.ico", "destination": "/favicon.ico" },
+    { "source": "/index.html", "destination": "/index.html" },
+    { "source": "/manifest.webmanifest", "destination": "/manifest.webmanifest" },
+    { "source": "/(.*)[.](js|css|png|jpg|jpeg|gif|svg|ico|json|webp)", "destination": "/$1.$2" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
