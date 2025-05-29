@@ -1,3 +1,5 @@
+@use '../../../scss/color-functions' as cf;
+
 // Custom Variables
 $primary: #6366f1;
 $secondary: #8b5cf6;
@@ -266,7 +268,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     transition: background-color 0.2s;
     
     &:hover {
-      background-color: darken($primary, 5%);
+      background-color: cf.custom-darken($primary, 5%);
     }
     
     i {
@@ -336,7 +338,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   
   span {
     font-size: 0.875rem;
-    color: darken($danger, 10%);
+    color: cf.custom-darken($danger, 10%);
   }
 }
 

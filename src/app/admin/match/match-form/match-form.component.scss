@@ -1,3 +1,5 @@
+@use '../../../scss/color-functions' as cf;
+
 // Custom Variables
 $primary: #6366f1;
 $secondary: #8b5cf6;
@@ -62,11 +64,11 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     color: white;
     
     &:hover {
-      background-color: darken($primary, 5%);
+      background-color: cf.custom-darken($primary, 5%);
     }
     
     &:disabled {
-      background-color: lighten($primary, 20%);
+      background-color: cf.custom-lighten($primary, 20%);
       cursor: not-allowed;
     }
   }
@@ -76,7 +78,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     color: #4b5563;
     
     &:hover {
-      background-color: darken(#e5e7eb, 5%);
+      background-color: cf.custom-darken(#e5e7eb, 5%);
     }
   }
   
@@ -144,11 +146,11 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .notification.success .notification-content span {
-  color: darken($success, 10%);
+  color: cf.custom-darken($success, 10%);
 }
 
 .notification.error .notification-content span {
-  color: darken($danger, 10%);
+  color: cf.custom-darken($danger, 10%);
 }
 
 // Form Card

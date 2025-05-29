@@ -1,0 +1,15 @@
+@use '../../../scss/color-functions' as cf;
+
+@use "sass:color";
+
+// Eski cf.custom-darken() fonksiyonu yerine kullanılacak mixin
+@function custom-darken($color, $amount) {
+  @return color.adjust($color, $lightness: -$amount);
+}
+
+// Eski cf.custom-lighten() fonksiyonu yerine kullanılacak mixin
+@function custom-lighten($color, $amount) {
+  @return color.adjust($color, $lightness: $amount);
+}
+
+// Diğer renk fonksiyonları buraya eklenebilir

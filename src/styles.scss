@@ -1,5 +1,8 @@
 /* Global styles for Fanla App */
 
+// Import custom color functions
+@use 'scss/color-functions' as cf;
+
 // Import Font Awesome for icons
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
 // Import Google Fonts
@@ -38,7 +41,7 @@ a {
   transition: color 0.3s ease;
   
   &:hover {
-    color: darken(#0d47a1, 15%);
+    color: cf.custom-cf.custom-darken(#0d47a1, 15%);
     text-decoration: underline;
   }
 }

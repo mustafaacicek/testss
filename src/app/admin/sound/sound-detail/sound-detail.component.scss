@@ -1,3 +1,5 @@
+@use '../../../scss/color-functions' as cf;
+
 // Custom Variables
 $primary: #6366f1;
 $secondary: #8b5cf6;
@@ -60,7 +62,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: darken($primary, 5%);
+    background-color: cf.custom-darken($primary, 5%);
     color: white;
     text-decoration: none;
   }
@@ -90,7 +92,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: darken(#e5e7eb, 5%);
+    background-color: cf.custom-darken(#e5e7eb, 5%);
     color: #4b5563;
     text-decoration: none;
   }
@@ -115,7 +117,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: darken($warning, 5%);
+    background-color: cf.custom-darken($warning, 5%);
     color: $dark;
     text-decoration: none;
   }
@@ -140,7 +142,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s;
   
   &:hover {
-    background-color: darken($danger, 5%);
+    background-color: cf.custom-darken($danger, 5%);
     color: white;
   }
   
@@ -208,11 +210,11 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .notification.success .notification-content span {
-  color: darken($success, 10%);
+  color: cf.custom-darken($success, 10%);
 }
 
 .notification.error .notification-content span {
-  color: darken($danger, 10%);
+  color: cf.custom-darken($danger, 10%);
 }
 
 // Detail Content
@@ -292,7 +294,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     
     &.status-paused {
       background-color: rgba($warning, 0.1);
-      color: darken($warning, 10%);
+      color: cf.custom-darken($warning, 10%);
     }
     
     &.status-buffering {
@@ -339,7 +341,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     font-size: 0.875rem;
     
     &:hover {
-      color: darken($primary, 10%);
+      color: cf.custom-darken($primary, 10%);
       text-decoration: underline;
     }
   }
@@ -391,7 +393,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     color: white;
     
     &:hover {
-      background-color: darken($success, 5%);
+      background-color: cf.custom-darken($success, 5%);
     }
   }
   
@@ -400,7 +402,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     color: $dark;
     
     &:hover {
-      background-color: darken($warning, 5%);
+      background-color: cf.custom-darken($warning, 5%);
     }
   }
   
@@ -409,7 +411,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     color: white;
     
     &:hover {
-      background-color: darken($danger, 5%);
+      background-color: cf.custom-darken($danger, 5%);
     }
   }
   
@@ -540,7 +542,7 @@ $shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
     
     span {
-      color: darken($info, 10%);
+      color: cf.custom-darken($info, 10%);
       font-size: 0.875rem;
     }
   }
