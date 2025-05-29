@@ -4,7 +4,14 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist/fanlaappfront/browser",
   "routes": [
-    { "handle": "filesystem" },
+    { "src": "/assets/(.*)", "dest": "/assets/$1" },
+    { "src": "/favicon.ico", "dest": "/favicon.ico" },
+    { "src": "/index.html", "dest": "/index.html" },
+    { "src": "/manifest.webmanifest", "dest": "/manifest.webmanifest" },
+    { "src": "/(.*).(js|css|png|jpg|jpeg|gif|svg|ico|json|webp)", "dest": "/$1.$2" },
     { "src": "/(.*)", "dest": "/index.html" }
+  ],
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
