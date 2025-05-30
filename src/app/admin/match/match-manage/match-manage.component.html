@@ -9,25 +9,27 @@
       </div>
     </div>
 
-    <!-- Notifications -->
-    <div class="notification success" *ngIf="successMessage">
-      <div class="notification-content">
-        <i class="fas fa-check-circle"></i>
-        <span>{{ successMessage }}</span>
+    <!-- Toast Notifications -->
+    <div class="toast-container">
+      <div class="toast success" *ngIf="successMessage" [@toastAnimation]>
+        <div class="toast-content">
+          <i class="fas fa-check-circle"></i>
+          <span>{{ successMessage }}</span>
+        </div>
+        <button class="toast-close" (click)="successMessage = ''">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
-      <button class="notification-close" (click)="successMessage = ''">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
 
-    <div class="notification error" *ngIf="errorMessage">
-      <div class="notification-content">
-        <i class="fas fa-exclamation-circle"></i>
-        <span>{{ errorMessage }}</span>
+      <div class="toast error" *ngIf="errorMessage" [@toastAnimation]>
+        <div class="toast-content">
+          <i class="fas fa-exclamation-circle"></i>
+          <span>{{ errorMessage }}</span>
+        </div>
+        <button class="toast-close" (click)="errorMessage = ''">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
-      <button class="notification-close" (click)="errorMessage = ''">
-        <i class="fas fa-times"></i>
-      </button>
     </div>
 
     <!-- Loading State -->
@@ -41,29 +43,29 @@
     <!-- Match Details -->
     <div class="match-details-container" *ngIf="!isLoading && matchDetail">
       <div class="match-card">
-        <div class="match-header">
-          <span class="match-date">{{ formatDate(matchDetail.matchDate) }}</span>
-          <span class="status-badge" [ngClass]="getStatusClass(matchDetail.status)">{{ matchDetail.status }}</span>
-        </div>
+        <div class="match-date">{{ formatDate(matchDetail.matchDate) }}</div>
         
         <div class="match-teams">
           <div class="team home-team">
-            <img [src]="matchDetail.teamLogo" alt="{{ matchDetail.teamName }}" class="team-logo">
-            <span class="team-name">{{ matchDetail.teamName }}</span>
+            <div class="team-logo">
+              <img [src]="matchDetail.teamLogo" alt="{{ matchDetail.teamName }}">
+            </div>
+            <div class="team-name">{{ matchDetail.teamName }}</div>
           </div>
           
-          <div class="match-score">
-            <span class="score">{{ matchDetail.homeScore }}</span>
-            <span class="separator">:</span>
-            <span class="score">{{ matchDetail.awayScore }}</span>
-          </div>
+          <div class="match-score">{{ getScoreDisplay() }}</div>
           
           <div class="team away-team">
-            <img [src]="matchDetail.opponentTeamLogo || matchDetail.manualOpponentLogo" 
-                alt="{{ matchDetail.opponentTeamName || matchDetail.manualOpponentName }}" 
-                class="team-logo">
-            <span class="team-name">{{ matchDetail.opponentTeamName || matchDetail.manualOpponentName }}</span>
+            <div class="team-logo">
+              <img [src]="matchDetail.opponentTeamLogo || matchDetail.manualOpponentLogo" 
+                   alt="{{ matchDetail.opponentTeamName || matchDetail.manualOpponentName }}">
+            </div>
+            <div class="team-name">{{ matchDetail.opponentTeamName || matchDetail.manualOpponentName }}</div>
           </div>
+        </div>
+        
+        <div class="match-status">
+          <span class="status-badge" [ngClass]="getStatusClass(matchDetail.status)">{{ matchDetail.status }}</span>
         </div>
       </div>
 
@@ -92,49 +94,55 @@
           
           <div class="sound-controls">
             <div class="playback-controls">
-              <button 
-                class="control-button play" 
-                (click)="startSound()"
-                [disabled]="!selectedSound || isPlaying"
-                title="Play"
-              >
-                <i class="fas fa-play"></i>
-              </button>
-              <button 
-                class="control-button pause" 
-                (click)="pauseSound()"
-                [disabled]="!isPlaying"
-                title="Pause"
-              >
-                <i class="fas fa-pause"></i>
-              </button>
-              <button 
-                class="control-button resume" 
-                (click)="resumeSound()"
-                [disabled]="!isPaused"
-                title="Resume"
-              >
-                <i class="fas fa-play-circle"></i>
-              </button>
-              <button 
-                class="control-button stop" 
-                (click)="stopSound()"
-                [disabled]="(!isPlaying && !isPaused) || !selectedSound"
-                title="Stop"
-              >
-                <i class="fas fa-stop"></i>
-              </button>
+              <div class="control-buttons-container">
+                <button 
+                  class="control-button play" 
+                  (click)="startSound()"
+                  [disabled]="!selectedSound || isPlaying"
+                  title="Play"
+                >
+                  <i class="fas fa-play"></i>
+                </button>
+                <button 
+                  class="control-button pause" 
+                  (click)="pauseSound()"
+                  [disabled]="!isPlaying"
+                  title="Pause"
+                >
+                  <i class="fas fa-pause"></i>
+                </button>
+                <button 
+                  class="control-button resume" 
+                  (click)="resumeSound()"
+                  [disabled]="!isPaused"
+                  title="Resume"
+                >
+                  <i class="fas fa-play"></i>
+                </button>
+                <button 
+                  class="control-button stop" 
+                  (click)="stopSound()"
+                  [disabled]="(!isPlaying && !isPaused) || !selectedSound"
+                  title="Stop"
+                >
+                  <i class="fas fa-stop"></i>
+                </button>
+              </div>
             </div>
             
             <div class="seek-control">
-              <input 
-                type="range" 
-                min="0" 
-                [max]="audioPlayer && audioPlayer.duration ? audioPlayer.duration * 1000 : 100000" 
-                [value]="currentPosition"
-                (change)="onSeekChange($event)"
-                [disabled]="!isPlaying && !isPaused"
-              >
+              <div class="progress-container">
+                <div class="progress-bar" [style.width.%]="(currentPosition / (audioPlayer?.duration || 1) / 10)"></div>
+                <input 
+                  type="range" 
+                  min="0" 
+                  [max]="audioPlayer && audioPlayer.duration ? audioPlayer.duration * 1000 : 100000" 
+                  [value]="currentPosition"
+                  (change)="onSeekChange($event)"
+                  [disabled]="!isPlaying && !isPaused"
+                  class="progress-input"
+                >
+              </div>
               <div class="time-display">
                 <span class="current-time">{{ formatTime(currentPosition) }}</span>
                 <span class="duration" *ngIf="audioPlayer && audioPlayer.duration">{{ formatTime(audioPlayer.duration * 1000) }}</span>
@@ -152,47 +160,31 @@
       <div class="available-sounds-section">
         <h2 class="section-title">Available Sounds</h2>
         
-        <div class="sounds-list" *ngIf="availableSounds.length > 0">
-          <div 
-            class="sound-item" 
-            *ngFor="let sound of availableSounds"
-            [class.selected]="selectedSound?.id === sound.id"
-            (click)="selectSound(sound)"
-          >
-            <div class="sound-image" *ngIf="sound.soundImageUrl">
-              <img [src]="sound.soundImageUrl" alt="{{ sound.title }}">
-            </div>
-            <div class="sound-image no-image" *ngIf="!sound.soundImageUrl">
-              <i class="fas fa-music"></i>
-            </div>
-            <div class="sound-details">
-              <h3 class="sound-title">{{ sound.title }}</h3>
-            </div>
-            <div class="sound-actions">
-              <button 
-                class="action-button play" 
-                (click)="selectSound(sound); startSound(); $event.stopPropagation()"
-                [disabled]="isPlaying && selectedSound?.id === sound.id"
-                title="Play"
-              >
-                <i class="fas fa-play"></i>
-              </button>
-              <button 
-                class="action-button pause" 
-                (click)="selectSound(sound); pauseSound(); $event.stopPropagation()"
-                [disabled]="!isPlaying || selectedSound?.id !== sound.id"
-                title="Pause"
-              >
-                <i class="fas fa-pause"></i>
-              </button>
-              <button 
-                class="action-button stop" 
-                (click)="selectSound(sound); stopSound(); $event.stopPropagation()"
-                [disabled]="(!isPlaying && !isPaused) || selectedSound?.id !== sound.id"
-                title="Stop"
-              >
-                <i class="fas fa-stop"></i>
-              </button>
+        <div class="available-sounds-container">
+          <div class="sound-grid">
+            <div class="sound-card" *ngFor="let sound of availableSounds" 
+                 [class.selected]="selectedSound?.id === sound.id"
+                 (click)="selectSound(sound)">
+              <div class="sound-image" *ngIf="sound.soundImageUrl">
+                <img [src]="sound.soundImageUrl" alt="{{ sound.title }}">
+              </div>
+              <div class="sound-image no-image" *ngIf="!sound.soundImageUrl">
+                <i class="fas fa-music"></i>
+              </div>
+              <div class="sound-info">
+                <h3 class="sound-title">{{ sound.title }}</h3>
+              </div>
+              <div class="sound-actions">
+                <button class="action-button play" (click)="$event.stopPropagation(); selectSound(sound); startSound()" [disabled]="isPlaying && selectedSound?.id === sound.id">
+                  <i class="fas fa-play"></i>
+                </button>
+                <button class="action-button pause" (click)="$event.stopPropagation(); pauseSound()" [disabled]="!isPlaying || selectedSound?.id !== sound.id">
+                  <i class="fas fa-pause"></i>
+                </button>
+                <button class="action-button stop" (click)="$event.stopPropagation(); stopSound()" [disabled]="(!isPlaying && !isPaused) || selectedSound?.id !== sound.id">
+                  <i class="fas fa-stop"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
