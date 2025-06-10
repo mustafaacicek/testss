@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  // Relative path kullanarak Vercel proxy'sine yönlendiriyoruz
-  // Bu sayede Vercel'in kendi proxy'si üzerinden backend'e istek yapılır ve HTTPS kullanılır
-  apiUrl: '/api'
+  useLocalBackend: false,
+  // Production ortamında doğrudan backend URL'sine istek atıyoruz
+  // Vercel proxy'si ile sorun yaşandığı için doğrudan HTTPS URL kullanıyoruz
+  apiUrl: 'https://fanla-backen-zmnemj-981630-94-154-32-75.traefik.me/api'
 };
