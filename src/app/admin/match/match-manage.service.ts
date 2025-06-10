@@ -4,6 +4,11 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { MatchDetailResponse, MatchSoundResponse, SoundControlResponse } from './match-manage.model';
 
+interface FlashlightResponse {
+  enabled: boolean;
+  message: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -60,5 +65,14 @@ export class MatchManageService {
   seekSound(matchId: number, position: number): Observable<SoundControlResponse> {
     const params = new HttpParams().set('position', position.toString());
     return this.http.post<SoundControlResponse>(`${this.apiUrl}/match/${matchId}/sound/seek`, {}, { params });
+  }
+
+  /**
+   * Control flashlight feature for the match
+   * @param matchId Match ID
+   * @param enabled Whether to enable or disable the flashlight
+   */
+  toggleFlashlight(matchId: number, enabled: boolean): Observable<FlashlightResponse> {
+    return this.http.post<FlashlightResponse>(`${environment.apiUrl}/admin/flashlight/match/${matchId}`, { enabled });
   }
 }

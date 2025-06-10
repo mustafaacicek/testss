@@ -49,6 +49,10 @@ export class MatchManageComponent implements OnInit, OnDestroy {
   // Track if we need to update from server
   private needsUpdate: boolean = false;
   
+  // Flashlight control
+  flashlightEnabled: boolean | null = null;
+  flashlightLoading: boolean = false;
+  
   // Enums for template
   SoundStatus = SoundStatus;
   
@@ -453,7 +457,7 @@ export class MatchManageComponent implements OnInit, OnDestroy {
   getStatusClass(status: string | null): string {
     if (!status) return '';
     
-    switch (status) {
+    switch (status) {      
       case 'PLAYING':
       case 'STARTED':
         return 'status-playing';
@@ -546,5 +550,26 @@ export class MatchManageComponent implements OnInit, OnDestroy {
     });
   }
   
-
+  /**
+   * Toggle flashlight feature for the match
+   * @param enabled Whether to enable or disable the flashlight
+   */
+  toggleFlashlight(enabled: boolean): void {
+    if (!this.matchId) return;
+    
+    this.flashlightLoading = true;
+    this.matchManageService.toggleFlashlight(this.matchId, enabled).subscribe({
+      next: (response) => {
+        this.flashlightEnabled = response.enabled;
+        this.successMessage = response.message || `Fener ışığı ${enabled ? 'açıldı' : 'kapatıldı'}`;
+        setTimeout(() => this.successMessage = '', 3000);
+        this.flashlightLoading = false;
+      },
+      error: (error) => {
+        this.errorMessage = error.message || `Fener ışığı ${enabled ? 'açılamadı' : 'kapatılamadı'}`;
+        setTimeout(() => this.errorMessage = '', 3000);
+        this.flashlightLoading = false;
+      }
+    });
+  }
 }

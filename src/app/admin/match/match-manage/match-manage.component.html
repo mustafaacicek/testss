@@ -67,6 +67,31 @@
         <div class="match-status">
           <span class="status-badge" [ngClass]="getStatusClass(matchDetail.status)">{{ matchDetail.status }}</span>
         </div>
+        
+        <!-- Flashlight Control Section -->
+        <div class="flashlight-control-section">
+          <div class="flashlight-toggle">
+            <span class="flashlight-label">Fener Işığı:</span>
+            <div class="toggle-buttons">
+              <button 
+                class="flashlight-button" 
+                [ngClass]="{'active': flashlightEnabled}"
+                (click)="toggleFlashlight(true)"
+                [disabled]="flashlightLoading"
+              >
+                <i class="fas fa-lightbulb"></i> Aç
+              </button>
+              <button 
+                class="flashlight-button" 
+                [ngClass]="{'active': flashlightEnabled === false}"
+                (click)="toggleFlashlight(false)"
+                [disabled]="flashlightLoading"
+              >
+                <i class="fas fa-lightbulb-slash"></i> Kapat
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Active Sound Section -->
