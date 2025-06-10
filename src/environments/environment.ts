@@ -1,5 +1,5 @@
 // Local backend ile uzak backend arasında geçiş yapmak için bu değeri değiştirin
-const useLocalBackend = true;
+const useLocalBackend = false;
 
 export const environment = {
   production: false,
