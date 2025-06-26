@@ -1,0 +1,140 @@
+<app-admin-layout [username]="'Admin'" userRole="Admin">
+  <div class="match-container">
+    <div class="page-header">
+      <h1 class="page-title">Takım Reklamları Yönetimi</h1>
+      <div class="header-actions">
+        <a [routerLink]="['/admin/team-ads/create']" class="action-button create-button">
+          <i class="fas fa-plus"></i>
+          <span>Yeni Reklam Ekle</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <i class="fas fa-search"></i>
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            placeholder="Reklam ara..."
+            (keyup.enter)="searchAds()"
+          >
+          <button *ngIf="searchQuery" class="clear-search" (click)="clearSearch()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="filter-wrapper">
+          <select [(ngModel)]="positionFilter" (change)="applyFilters()">
+            <option value="ALL">Tüm Pozisyonlar</option>
+            <option [value]="AdPosition.TOP_BANNER">Üst Banner</option>
+            <option [value]="AdPosition.BOTTOM_BANNER">Alt Banner</option>
+          </select>
+        </div>
+        <div class="filter-wrapper">
+          <select [(ngModel)]="typeFilter" (change)="applyFilters()">
+            <option value="ALL">Tüm Tipler</option>
+            <option [value]="AdType.BANNER">Banner</option>
+            <option [value]="AdType.VIDEO">Video</option>
+            <option [value]="AdType.POPUP">Popup</option>
+            <option [value]="AdType.SPONSOR">Sponsor</option>
+          </select>
+        </div>
+        <button class="search-button" (click)="searchAds()">
+          <i class="fas fa-search"></i>
+          Ara
+        </button>
+      </div>
+    </div>
+
+    <div class="notification success" *ngIf="successMessage">
+      <div class="notification-content">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="successMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="notification error" *ngIf="errorMessage">
+      <div class="notification-content">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+      <button class="notification-close" (click)="errorMessage = ''">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="loading-spinner" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <span>Yükleniyor...</span>
+    </div>
+
+    <div class="no-results" *ngIf="!isLoading && filteredAds.length === 0">
+      <i class="fas fa-info-circle"></i>
+      <span>Hiç reklam bulunamadı.</span>
+    </div>
+
+    <div class="match-cards-container" *ngIf="!isLoading && filteredAds.length > 0">
+      <div class="match-card" *ngFor="let ad of filteredAds">
+        <div class="match-header">
+          <span class="match-date">{{ formatDate(ad.startDate) }} - {{ formatDate(ad.endDate) }}</span>
+          <span class="status-badge" [ngClass]="{'active': ad.isActive, 'inactive': !ad.isActive}">
+            {{ ad.isActive ? 'Aktif' : 'Pasif' }}
+          </span>
+        </div>
+        
+        <div class="ad-content">
+          <div class="ad-title-section">
+            <h3 class="ad-title">{{ ad.title }}</h3>
+            <p class="ad-description">{{ ad.description }}</p>
+          </div>
+          
+          <div class="ad-details">
+            <div class="ad-detail-item">
+              <span class="detail-label">Takım:</span>
+              <span class="detail-value">{{ ad.teamName }}</span>
+            </div>
+            
+            <div class="ad-detail-item">
+              <span class="detail-label">Pozisyon:</span>
+              <span class="badge position-badge" [ngClass]="getPositionClass(ad.adPosition)">
+                {{ getPositionName(ad.adPosition) }}
+              </span>
+            </div>
+            
+            <div class="ad-detail-item">
+              <span class="detail-label">Tip:</span>
+              <span class="badge type-badge" [ngClass]="getTypeClass(ad.adType)">
+                {{ ad.adType }}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="match-actions">
+          <div class="status-toggle">
+            <label class="switch">
+              <input type="checkbox" [checked]="ad.isActive" (change)="toggleAdStatus(ad)">
+              <span class="slider round"></span>
+            </label>
+            <span class="status-text">{{ ad.isActive ? 'Aktif' : 'Pasif' }}</span>
+          </div>
+          
+          <div class="action-buttons">
+            <a [routerLink]="['/admin/team-ads/edit', ad.id]" class="action-button edit-button">
+              <i class="fas fa-edit"></i>
+              Düzenle
+            </a>
+            <button class="action-button delete-button" (click)="deleteAd(ad.id)">
+              <i class="fas fa-trash"></i>
+              Sil
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-admin-layout>

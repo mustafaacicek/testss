@@ -97,6 +97,24 @@ export const routes: Routes = [
     data: { role: 'SuperAdmin' }
   },
   {
+    path: 'admin/team-ads',
+    loadComponent: () => import('./admin/team-ads/team-ads-list/team-ads-list.component').then(m => m.TeamAdsListComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
+  {
+    path: 'admin/team-ads/create',
+    loadComponent: () => import('./admin/team-ads/team-ad-form/team-ad-form.component').then(m => m.TeamAdFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
+  {
+    path: 'admin/team-ads/edit/:id',
+    loadComponent: () => import('./admin/team-ads/team-ad-form/team-ad-form.component').then(m => m.TeamAdFormComponent),
+    canActivate: [AuthGuard],
+    data: { role: 'Admin' }
+  },
+  {
     path: 'superadmin/countries/edit/:id',
     loadComponent: () => import('./superadmin/country/country-form/country-form.component').then(m => m.CountryFormComponent),
     canActivate: [AuthGuard],
