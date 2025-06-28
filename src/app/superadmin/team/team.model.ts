@@ -15,6 +15,7 @@ export interface Team {
   subscriptionExpiry?: string;
   createdAt?: string;
   updatedAt?: string;
+  serverUrl?: string;
 }
 
 export interface TeamResponse {
@@ -34,6 +35,7 @@ export interface TeamResponse {
   subscriptionExpiry: string;
   createdAt: string;
   updatedAt: string;
+  serverUrl: string;
 }
 
 export interface TeamRequest {
@@ -44,5 +46,6 @@ export interface TeamRequest {
   countryId: number;
   subscriptionTypeId?: number;
   isActive?: boolean;
+  serverUrl?: string;
 }
 

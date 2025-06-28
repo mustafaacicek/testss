@@ -76,6 +76,7 @@ export class TeamFormComponent implements OnInit {
       stadiumLocation: ['', [Validators.required]],
       countryId: ['', [Validators.required]],
       subscriptionTypeId: [''],
+      serverUrl: [''],
       isActive: [true]
     });
   }
@@ -93,6 +94,7 @@ export class TeamFormComponent implements OnInit {
           stadiumLocation: team.stadiumLocation,
           countryId: team.countryId,
           subscriptionTypeId: team.subscriptionTypeId || '',
+          serverUrl: team.serverUrl || '',
           isActive: team.isActive
         });
         this.isLoading = false;
@@ -119,6 +121,7 @@ export class TeamFormComponent implements OnInit {
       stadiumLocation: this.teamForm.value.stadiumLocation,
       countryId: +this.teamForm.value.countryId,
       subscriptionTypeId: this.teamForm.value.subscriptionTypeId ? +this.teamForm.value.subscriptionTypeId : undefined,
+      serverUrl: this.teamForm.value.serverUrl || undefined,
       isActive: this.teamForm.value.isActive
     };
 

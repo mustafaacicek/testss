@@ -60,6 +60,19 @@
         </div>
 
         <div class="info-section">
+          <h3 class="section-title">Server Information</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Server URL</div>
+              <div class="info-value">
+                <span *ngIf="team.serverUrl">{{ team.serverUrl }}</span>
+                <span *ngIf="!team.serverUrl" class="no-data">No server URL configured</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-section">
           <h3 class="section-title">Subscription Details</h3>
           <div class="subscription-card" [ngClass]="getSubscriptionStatus()">
             <div class="subscription-header">
