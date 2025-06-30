@@ -6,5 +6,5 @@ export const environment = {
   useLocalBackend: useLocalBackend,
   // useLocalBackend true ise doğrudan localhost:8080'e, false ise doğrudan uzak backend'e istek atar
   // Not: Uzak backend için HTTPS kullanılmalıdır, aksi halde Mixed Content hatası alınır
-  apiUrl: useLocalBackend ? 'http://localhost:8080/api' : 'https://fanla.net/api'
+  apiUrl: useLocalBackend ? 'http://localhost:8080/api' : 'https://api.fanla.net/api'
 };
