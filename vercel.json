@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/api/:match*", "destination": "http://fanla-backen-zmnemj-981630-94-154-32-75.traefik.me/api/:match*" },
+    { "source": "/api/:match*", "destination": "https://api.fanla.net/api/:match*" },
     { "source": "/(.*)", "destination": "/" }
   ],
   "headers": [
